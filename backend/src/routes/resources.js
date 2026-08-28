@@ -46,6 +46,8 @@ import {
   getRecentActions,
   getTrends,
   getIncidentAnalytics,
+  getWorklist,
+  getCoverage,
 } from '../services/analytics.js';
 import { SCENARIOS } from '../services/simulator.js';
 import { supabase, unwrap } from '../config/supabase.js';
@@ -278,13 +280,22 @@ analyticsRouter.use(authenticate);
 analyticsRouter.get(
   '/overview',
   asyncHandler(async (req, res) => {
-    const [overview, riskDistribution, topRisk, recentActions] = await Promise.all([
+    const [overview, riskDistribution, recentActions, worklist, coverage] = await Promise.all([
       getOverview(),
       getRiskDistribution(),
-      getTopRiskCustomers(5),
-      getRecentActions(8),
+      getRecentActions(6),
+      getWorklist(12),
+      getCoverage(),
     ]);
-    res.json({ data: { ...overview, riskDistribution, topRiskCustomers: topRisk, recentActions } });
+    res.json({
+      data: {
+        ...overview,
+        riskDistribution,
+        recentActions,
+        worklist: worklist.rows,
+        coverage,
+      },
+    });
   })
 );
 

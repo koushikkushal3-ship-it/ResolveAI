@@ -11,7 +11,8 @@ import {
   User,
   XCircle,
 } from 'lucide-react';
-import { Badge, Card, CardBody, CardHeader, cx } from '../ui/index.jsx';
+import { Link } from 'react-router-dom';
+import { Badge, Button, Card, CardBody, CardHeader, cx } from '../ui/index.jsx';
 import { formatDelay, formatInr, formatRelative, humanize, riskTone, statusTone } from '../../utils/format.js';
 
 /**
@@ -340,6 +341,159 @@ export function StatCard({ label, value, hint, icon: Icon, tone = 'text-fg', tes
       </p>
       {hint && <p className="mt-1.5 text-xs text-fg-muted">{hint}</p>}
     </Card>
+  );
+}
+
+/**
+ * Coverage bar — the one chart on the dashboard that earns its place.
+ *
+ * It answers "is anyone falling through?", which a risk-distribution bar chart
+ * does not. Values are printed on the bar rather than hidden behind a hover,
+ * because a number you must hover to read is a number nobody reads.
+ */
+export function CoverageBar({ coverage, testId }) {
+  if (!coverage || coverage.total === 0) {
+    return (
+      <p className="text-sm text-fg-muted">
+        No unresolved cases. Everyone affected has been dealt with.
+      </p>
+    );
+  }
+
+  const { total, contacted, high, medium, low } = coverage;
+  const pct = Math.round((contacted / total) * 100);
+  const segments = [
+    { key: 'contacted', label: 'Contacted', count: contacted, cls: 'bg-low-fill' },
+    { key: 'high', label: 'High, waiting', count: high.uncontacted, cls: 'bg-high-fill' },
+    { key: 'medium', label: 'Medium, waiting', count: medium.uncontacted, cls: 'bg-medium-fill' },
+    { key: 'low', label: 'Low, waiting', count: low.uncontacted, cls: 'bg-border-strong' },
+  ].filter((s) => s.count > 0);
+
+  return (
+    <div data-testid={testId}>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <p className="text-sm text-fg">
+          <span className="font-mono text-2xl font-semibold tabular">{contacted}</span>
+          <span className="text-fg-muted"> of </span>
+          <span className="font-mono text-2xl font-semibold tabular">{total}</span>
+          <span className="text-fg-muted"> affected customers contacted</span>
+        </p>
+        <span className={cx('font-mono text-sm tabular', pct === 100 ? 'text-low' : 'text-fg-muted')}>
+          {pct}%
+        </span>
+      </div>
+
+      <div
+        className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-surface-2"
+        role="img"
+        aria-label={`${contacted} of ${total} affected customers contacted. ${high.uncontacted} high risk still waiting.`}
+      >
+        {segments.map((s) => (
+          <div
+            key={s.key}
+            className={cx('h-full transition-[width] duration-700 ease-out first:rounded-l-full last:rounded-r-full', s.cls)}
+            style={{ width: `${(s.count / total) * 100}%` }}
+          />
+        ))}
+      </div>
+
+      {/* A legend with counts, not a colour key you have to decode. */}
+      <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
+        {segments.map((s) => (
+          <li key={s.key} className="flex items-center gap-1.5 text-xs">
+            <span className={cx('h-2 w-2 rounded-full', s.cls)} aria-hidden="true" />
+            <span className="font-mono font-semibold text-fg tabular">{s.count}</span>
+            <span className="text-fg-muted">{s.label}</span>
+          </li>
+        ))}
+      </ul>
+
+      {high.uncontacted > 0 && (
+        <p className="mt-3 flex items-center gap-1.5 rounded-md border border-high/40 bg-high-soft px-2.5 py-1.5 text-xs text-high">
+          <AlertTriangle size={13} aria-hidden="true" />
+          {high.uncontacted} high-risk {high.uncontacted === 1 ? 'customer has' : 'customers have'} not
+          been contacted yet
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * One row of the triage queue.
+ *
+ * Carries everything needed to decide without opening anything: who, how bad,
+ * why, what it is worth, what the agent proposes, and whether the customer
+ * still knows nothing.
+ */
+export function TriageRow({ row, onResolve, resolving, testId }) {
+  const tone = riskTone(row.riskLevel);
+  return (
+    <div
+      data-testid={testId}
+      className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border/50 px-4 py-3 transition-colors last:border-0 hover:bg-surface-2"
+    >
+      {/* Score first: the queue is ranked by it, so it is the scan column. */}
+      <div className="w-12 shrink-0 text-center">
+        <p className={cx('font-mono text-xl font-semibold leading-none tabular', tone.text)}>
+          {row.riskScore}
+        </p>
+        <p className="mt-0.5 text-[10px] uppercase tracking-wider text-fg-muted">{row.riskLevel}</p>
+      </div>
+
+      <div className="min-w-[180px] flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to={`/customers/${row.customerId}`}
+            className="text-sm font-medium text-fg hover:text-brand hover:underline"
+          >
+            {row.customerName}
+          </Link>
+          {row.segment === 'PREMIUM' && (
+            <Badge tone="text-brand bg-brand/10 border-brand/40">Premium</Badge>
+          )}
+          {!row.contacted ? (
+            <Badge tone="text-high bg-high-soft border-high/40">Not contacted</Badge>
+          ) : (
+            <Badge tone="text-low bg-low-soft border-low/40" icon={CheckCircle2}>
+              Contacted
+            </Badge>
+          )}
+        </div>
+        <p className="mt-0.5 text-xs text-fg-muted">{row.topFactors.join(' · ')}</p>
+      </div>
+
+      <div className="w-28 shrink-0 text-right">
+        <p className="font-mono text-sm text-fg tabular">{formatInr(row.orderAmount)}</p>
+        {row.delayHours > 0 && (
+          <p className="text-xs text-fg-muted">{formatDelay(row.delayHours)}</p>
+        )}
+      </div>
+
+      <div className="w-44 shrink-0">
+        {row.proposedAction ? (
+          <>
+            <p className="text-xs font-medium text-fg">{humanize(row.proposedAction)}</p>
+            <p className="font-mono text-[11px] text-fg-muted">
+              {row.proposedCredit > 0 ? `${formatInr(row.proposedCredit)} · ` : ''}
+              {row.policyReference}
+            </p>
+          </>
+        ) : (
+          <p className="text-xs text-fg-muted">Not analyzed</p>
+        )}
+      </div>
+
+      <Button
+        size="sm"
+        variant={row.riskLevel === 'HIGH' ? 'primary' : 'secondary'}
+        loading={resolving}
+        onClick={() => onResolve(row)}
+        data-testid="triage-resolve"
+      >
+        {row.proposedAction ? 'Resolve' : 'Analyze'}
+      </Button>
+    </div>
   );
 }
 

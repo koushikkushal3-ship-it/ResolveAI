@@ -6,6 +6,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   Legend,
   Line,
   LineChart,
@@ -144,6 +145,15 @@ export function RiskDistributionChart({ data = [] }) {
             {data.map((d) => (
               <Cell key={d.level} fill={fill[d.level]} />
             ))}
+            {/* Values printed on the marks: a figure you have to hover for is
+                a figure nobody reads, and this chart exists to be glanced at. */}
+            <LabelList
+              dataKey="open"
+              position="right"
+              fill={c.text}
+              fontSize={11}
+              fontFamily="var(--font-mono)"
+            />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
@@ -267,7 +277,15 @@ export function CategoryBarChart({ data = [], label = 'Count', color = 'brand' }
             tickFormatter={(v) => String(v).replace(/_/g, ' ').toLowerCase()}
           />
           <Tooltip {...tooltipStyle(c)} formatter={(v) => [v, label]} />
-          <Bar dataKey="value" fill={c[color] ?? c.brand} radius={[0, 4, 4, 0]} barSize={18} />
+          <Bar dataKey="value" fill={c[color] ?? c.brand} radius={[0, 4, 4, 0]} barSize={18}>
+            <LabelList
+              dataKey="value"
+              position="right"
+              fill={c.text}
+              fontSize={11}
+              fontFamily="var(--font-mono)"
+            />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
       <DataTable
