@@ -19,6 +19,7 @@ import {
 import { useAuth } from '../hooks/useAuth.jsx';
 import { Button, cx } from '../components/ui/index.jsx';
 import { initials } from '../utils/format.js';
+import { LogoMark } from '../components/Logo.jsx';
 
 /**
  * Navigation, grouped by the stage of the loop each screen belongs to.
@@ -169,8 +170,8 @@ export function AppShell() {
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-surface lg:flex">
         <div className="flex h-16 items-center gap-2.5 border-b border-border px-4">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-fill text-on-brand shadow-card">
-            <ShieldCheck size={17} aria-hidden="true" />
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-fill text-on-brand">
+            <LogoMark size={19} />
           </span>
           <div className="min-w-0 leading-tight">
             <p className="font-semibold tracking-tight">ResolveAI</p>

@@ -120,9 +120,19 @@ export function PageHeader({ title, subtitle, action, eyebrow }) {
 }
 
 // --- Badge -------------------------------------------------------------------
-export function Badge({ tone = 'text-fg-muted bg-surface-2 border-border', icon: Icon, children, className }) {
+export function Badge({
+  tone = 'text-fg-muted bg-surface-2 border-border',
+  icon: Icon,
+  children,
+  className,
+  // Rest props are forwarded. Without this the component silently dropped
+  // data-testid, aria-*, title — anything the caller passed but Badge did not
+  // happen to name.
+  ...rest
+}) {
   return (
     <span
+      {...rest}
       className={cx(
         'inline-flex items-center gap-1 rounded-[5px] border px-1.5 py-px text-[11px] font-medium whitespace-nowrap',
         tone,
@@ -313,9 +323,13 @@ export function Modal({ open, onClose, title, children, footer }) {
  * Table shell. The horizontal scroll lives on this wrapper, never on the page —
  * a body that scrolls sideways on mobile is the most common responsive failure.
  */
-export const TableWrap = ({ children, className }) => (
+export const TableWrap = ({ children, className, ...rest }) => (
+  // Rest props land on the TABLE, not the scroll wrapper: a data-testid or an
+  // aria-label describes the tabular content, not the box it scrolls in.
   <div className={cx('w-full overflow-x-auto', className)}>
-    <table className="w-full text-sm border-collapse">{children}</table>
+    <table className="w-full border-collapse text-sm" {...rest}>
+      {children}
+    </table>
   </div>
 );
 

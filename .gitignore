@@ -20,6 +20,8 @@ frontend/dist/
 coverage/
 playwright-report/
 test-results/
+frontend/playwright-report/
+frontend/test-results/
 blob-report/
 .playwright/
 

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { ShieldCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { AuthLayout } from '../layouts/AppShell.jsx';
 import { Button, Card, CardBody, Field, Input } from '../components/ui/index.jsx';
+import { LogoMark } from '../components/Logo.jsx';
 
 const DEMO = [
   { role: 'Supervisor', email: 'supervisor@resolveai.demo', note: 'can approve actions' },
@@ -21,8 +21,14 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
   const [pending, setPending] = useState(false);
 
+  // Where the user was originally headed, if the route guard sent them here.
+  const destination = location.state?.from?.pathname ?? '/dashboard';
+
   if (loading) return null;
-  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+  // This fires on the render AFTER a successful login too, racing the explicit
+  // navigate() below. It must honour the same destination, or every deep link
+  // silently lands on the dashboard instead.
+  if (isAuthenticated) return <Navigate to={destination} replace />;
 
   const submit = async (e) => {
     e.preventDefault();
@@ -32,7 +38,7 @@ export default function LoginPage() {
     setPending(false);
     if (result.ok) {
       // Return to wherever they were headed before the login detour.
-      navigate(location.state?.from?.pathname ?? '/dashboard', { replace: true });
+      navigate(destination, { replace: true });
     } else {
       setError(result.error);
     }
@@ -47,8 +53,8 @@ export default function LoginPage() {
   return (
     <AuthLayout>
       <div className="mb-7 text-center">
-        <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-fill text-on-brand shadow-lift">
-          <ShieldCheck size={23} aria-hidden="true" />
+        <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-fill text-on-brand">
+          <LogoMark size={28} />
         </span>
         <h1 className="text-2xl font-semibold tracking-tight">ResolveAI</h1>
         <p className="mt-1.5 text-sm text-fg-muted">Customer Experience Command Center</p>
