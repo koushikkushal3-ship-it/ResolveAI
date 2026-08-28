@@ -100,7 +100,7 @@ Copy each `.env.example` to `.env` and fill it in. **Never commit a filled `.env
 | `JWT_SECRET` | Signing secret. Generate a random 48-byte value. |
 | `JWT_EXPIRES_IN` | Token lifetime (default `8h`) |
 | `GEMINI_API_KEY` | Google Gemini key |
-| `GEMINI_MODEL` | Default `gemini-2.5-flash` |
+| `GEMINI_MODEL` | Default `gemini-3.6-flash` |
 | `FRONTEND_URL` | Exact CORS origin of the frontend |
 
 **`frontend/.env`**

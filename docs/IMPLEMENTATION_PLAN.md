@@ -368,7 +368,7 @@ Unit-tested against a fixture table covering both clamp boundaries and every lev
 
 ## 8. AI Layer (Google Gemini)
 
-**Model:** `gemini-2.5-flash` via `@google/genai`, overridable through `GEMINI_MODEL`.
+**Model:** `gemini-3.6-flash` via `@google/genai`, overridable through `GEMINI_MODEL`.
 **Backend-only.** The key never leaves Render. The frontend has exactly one variable: `VITE_API_URL`.
 
 ### 8.1 Structured output, enforced twice

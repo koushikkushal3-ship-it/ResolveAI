@@ -23,8 +23,13 @@ const schema = z.object({
     .min(32, 'JWT_SECRET must be at least 32 characters — generate one with crypto.randomBytes(48)'),
   JWT_EXPIRES_IN: z.string().default('8h'),
 
+  // Up to three Gemini keys. Extras are rotated to on a quota error, which is
+  // the practical answer to a free-tier limit landing mid-demo. Every key is
+  // still Google Gemini, so this stays inside the assignment stack.
   GEMINI_API_KEY: z.string().optional(),
-  GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
+  GEMINI_API_KEY_2: z.string().optional(),
+  GEMINI_API_KEY_3: z.string().optional(),
+  GEMINI_MODEL: z.string().default('gemini-3.6-flash'),
 
   FRONTEND_URL: z.string().min(1).default('http://localhost:5173'),
 });
@@ -43,8 +48,17 @@ if (!parsed.success) {
 
 export const env = parsed.data;
 
-/** True when a Gemini key is configured. False routes the agent to its fallback. */
-export const isGeminiConfigured = Boolean(env.GEMINI_API_KEY);
+/**
+ * Configured Gemini keys, in rotation order. Blank entries are dropped, so a
+ * half-filled .env degrades to however many keys are actually present rather
+ * than failing on an empty string.
+ */
+export const geminiKeys = [env.GEMINI_API_KEY, env.GEMINI_API_KEY_2, env.GEMINI_API_KEY_3]
+  .map((k) => k?.trim())
+  .filter(Boolean);
+
+/** True when at least one key is configured. False routes the agent to its fallback. */
+export const isGeminiConfigured = geminiKeys.length > 0;
 
 export const isProduction = env.NODE_ENV === 'production';
 export const isTest = env.NODE_ENV === 'test';
