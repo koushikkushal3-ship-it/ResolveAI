@@ -122,7 +122,7 @@ export default function IncidentDetailPage() {
                   <Td>
                     <Link
                       to={`/customers/${a.customerId}`}
-                      className="font-medium text-fg hover:text-brand hover:underline"
+                      className="target-24 font-medium text-fg hover:text-brand hover:underline"
                       data-testid="affected-customer-link"
                     >
                       {a.customer.name}

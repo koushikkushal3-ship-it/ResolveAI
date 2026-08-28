@@ -149,7 +149,7 @@ export default function CustomersPage() {
                 {data.map((c) => (
                   <tr key={c.id} className="transition-colors hover:bg-surface-2">
                     <Td>
-                      <Link to={`/customers/${c.id}`} className="font-medium text-fg hover:text-brand hover:underline">
+                      <Link to={`/customers/${c.id}`} className="target-24 font-medium text-fg hover:text-brand hover:underline">
                         {c.name}
                       </Link>
                       <p className="text-xs text-fg-muted">{c.email}</p>

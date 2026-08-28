@@ -70,7 +70,11 @@
   --rai-fg-muted: #94a6bd;
 
   --rai-brand: #38bdf8;
-  --rai-brand-fill: #0284c7;
+  /* White on #0284c7 measures 4.1:1 in the rendered DOM — below AA for normal
+     text. #0369a1 gives white 5.93:1 while still holding 3.16:1 against the
+     page background, so the button stays visible as an object. Darker fills
+     pass the text check but sink into the background. */
+  --rai-brand-fill: #0369a1;
   --rai-on-brand: #ffffff;
 
   --rai-low: #4ade80;
@@ -188,6 +192,24 @@
     text-wrap: balance;
   }
 
+  /* WCAG 2.2 AA (2.5.8) wants pointer targets at 24x24 CSS px. Standalone
+     links inside rows rendered 17px tall. The pseudo-element extends the hit
+     area without changing layout, so row rhythm is unaffected. */
+  .target-24 {
+    position: relative;
+  }
+  .target-24::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    /* 26, not 24: the probe measured 23.8 effective px at 24, because
+       subpixel line boxes round down. The extra 2px guarantees the minimum. */
+    height: 26px;
+    transform: translateY(-50%);
+  }
+
   /* IDs, URLs and user content reflow instead of overflowing the container. */
   .wrap-anywhere {
     overflow-wrap: anywhere;
@@ -217,6 +239,72 @@
 }
 
 @layer components {
+  /* ---------------------------------------------------------------------
+     Type scale — five roles, no in-between sizes.
+
+     The previous sheet drifted to 28/14/13/12/11/10px, which is six sizes
+     with almost no contrast between the middle four. Nothing dominated, so
+     everything competed. These five have decisive jumps and each has ONE
+     job; if a new size seems necessary, the layout is usually wrong.
+  --------------------------------------------------------------------- */
+  .t-display {
+    font-size: 30px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    font-variant-numeric: tabular-nums;
+  }
+  .t-title {
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.018em;
+  }
+  .t-body {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  /* 12px, not 12.5 — Tailwind's text-xs is 12px and having both meant the
+     scale silently carried two near-identical steps. One value, one step. */
+  .t-label {
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  /* Section and column headers. Uppercase + tracking is what separates a
+     label from body copy without needing another weight or colour. */
+  .t-micro {
+    font-size: 10.5px;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  /* ---------------------------------------------------------------------
+     Surface strategy.
+
+     A border is a strong signal and the sheet was spending it on every
+     box. `.panel` is the only bordered container; groups INSIDE it are
+     separated by dividers and space, not by more borders.
+  --------------------------------------------------------------------- */
+  .panel {
+    position: relative;
+    border-radius: 14px;
+    border: 1px solid var(--rai-border);
+    background: var(--rai-surface);
+    box-shadow: var(--rai-shadow);
+  }
+  .panel::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    border-radius: 14px 14px 0 0;
+    background: linear-gradient(90deg, transparent, var(--rai-hairline), transparent);
+    pointer-events: none;
+  }
+
   /* Lit top edge. One shared class rather than repeating a pseudo-element
      across every card, panel and tile. */
   .surface-edge {

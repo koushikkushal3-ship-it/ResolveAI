@@ -304,42 +304,74 @@ export function NotificationPreview({ message, channel, customerName, sent = fal
 }
 
 /**
- * KPI tile.
+ * Metric strip — ONE surface holding every headline number, divided
+ * internally rather than split into separate cards.
  *
- * The accent rail encodes severity so the row can be scanned in one pass
- * without reading a single label — which is the whole point of a KPI strip in
- * an operations console.
+ * Four bordered cards in a row read as four unrelated things and spend a
+ * strong visual signal (a border) on grouping that adjacency already
+ * communicates. One panel with hairline dividers reads as a single instrument
+ * cluster, which is what it is.
  */
+export function StatStrip({ children, testId }) {
+  return (
+    <div
+      data-testid={testId}
+      className="panel grid grid-cols-2 divide-x divide-y divide-border/70 overflow-hidden lg:grid-cols-4 lg:divide-y-0"
+    >
+      {children}
+    </div>
+  );
+}
+
 const ACCENT = {
   'text-high': 'bg-high-fill',
   'text-medium': 'bg-medium-fill',
   'text-low': 'bg-low-fill',
   'text-escalated': 'bg-escalated',
-  'text-fg': 'bg-border-strong',
+  'text-fg': 'bg-transparent',
 };
 
-export function StatCard({ label, value, hint, icon: Icon, tone = 'text-fg', testId, index = 0 }) {
+/**
+ * One cell of the strip.
+ *
+ * The accent bar sits UNDER the number rather than beside the card, so it
+ * reads as an underline on the value it qualifies instead of as decoration on
+ * a container. Only non-neutral tones draw it — a rail on every cell would
+ * make severity meaningless.
+ */
+export function StatCell({ label, value, hint, icon: Icon, tone = 'text-fg', testId, index = 0 }) {
   return (
-    <Card
+    <div
       data-testid={testId}
-      interactive
-      className="rise-in relative p-4 pl-5"
-      // Staggered by 40ms so the strip resolves left to right instead of
-      // appearing all at once. Disabled entirely under reduced-motion.
+      className="rise-in relative px-5 py-4"
+      // 40ms stagger so the cluster resolves left to right rather than
+      // popping. Disabled entirely under prefers-reduced-motion.
       style={{ animationDelay: `${index * 40}ms` }}
     >
-      <span
-        className={cx('absolute inset-y-0 left-0 w-1', ACCENT[tone] ?? ACCENT['text-fg'])}
-        aria-hidden="true"
-      />
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-fg-muted">{label}</p>
-        {Icon && <Icon size={15} className={cx('shrink-0 opacity-70', tone)} aria-hidden="true" />}
+      <div className="flex items-center justify-between gap-2">
+        <p className="t-micro text-fg-muted">{label}</p>
+        {Icon && <Icon size={14} className={cx('shrink-0 opacity-60', tone)} aria-hidden="true" />}
       </div>
-      <p className={cx('mt-2.5 font-mono text-[28px] font-semibold leading-none tabular', tone)}>
-        {value}
-      </p>
-      {hint && <p className="mt-1.5 text-xs text-fg-muted">{hint}</p>}
+
+      <p className={cx('t-display mt-3 font-mono', tone)}>{value}</p>
+
+      {tone !== 'text-fg' && (
+        <span
+          className={cx('mt-2.5 block h-0.5 w-8 rounded-full', ACCENT[tone])}
+          aria-hidden="true"
+        />
+      )}
+
+      {hint && <p className={cx('text-xs text-fg-muted', tone !== 'text-fg' ? 'mt-2' : 'mt-3.5')}>{hint}</p>}
+    </div>
+  );
+}
+
+/** Kept for the analytics page, which still wants discrete tiles. */
+export function StatCard(props) {
+  return (
+    <Card className="p-0">
+      <StatCell {...props} />
     </Card>
   );
 }
@@ -372,11 +404,14 @@ export function CoverageBar({ coverage, testId }) {
   return (
     <div data-testid={testId}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <p className="text-sm text-fg">
-          <span className="font-mono text-2xl font-semibold tabular">{contacted}</span>
-          <span className="text-fg-muted"> of </span>
-          <span className="font-mono text-2xl font-semibold tabular">{total}</span>
-          <span className="text-fg-muted"> affected customers contacted</span>
+        <p className="t-label text-fg-muted">
+          Outreach coverage
+          <span className="ml-2 text-fg">
+            <span className="font-mono text-base font-semibold tabular">{contacted}</span>
+            <span className="text-fg-muted"> of </span>
+            <span className="font-mono text-base font-semibold tabular">{total}</span>
+            <span className="text-fg-muted"> affected customers contacted</span>
+          </span>
         </p>
         <span className={cx('font-mono text-sm tabular', pct === 100 ? 'text-low' : 'text-fg-muted')}>
           {pct}%
@@ -384,7 +419,7 @@ export function CoverageBar({ coverage, testId }) {
       </div>
 
       <div
-        className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-surface-2"
+        className="mt-2.5 flex h-2.5 w-full overflow-hidden rounded-full bg-surface-2"
         role="img"
         aria-label={`${contacted} of ${total} affected customers contacted. ${high.uncontacted} high risk still waiting.`}
       >
@@ -431,50 +466,54 @@ export function TriageRow({ row, onResolve, resolving, testId }) {
   return (
     <div
       data-testid={testId}
-      className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border/50 px-4 py-3 transition-colors last:border-0 hover:bg-surface-2"
+      className="group flex flex-wrap items-center gap-x-5 gap-y-2.5 border-b border-border/60 px-5 py-3.5 transition-colors last:border-0 hover:bg-surface-2/60"
     >
-      {/* Score first: the queue is ranked by it, so it is the scan column. */}
-      <div className="w-12 shrink-0 text-center">
-        <p className={cx('font-mono text-xl font-semibold leading-none tabular', tone.text)}>
+      {/* Score is the scan column — the queue is ranked by it, so it sits
+          first, right-aligned as a numeral block rather than centred text. */}
+      <div className="w-11 shrink-0">
+        <p className={cx('font-mono text-[22px] font-semibold leading-none tabular', tone.text)}>
           {row.riskScore}
         </p>
-        <p className="mt-0.5 text-[10px] uppercase tracking-wider text-fg-muted">{row.riskLevel}</p>
+        <p className="t-micro mt-1 text-fg-muted">
+          {row.riskLevel}
+        </p>
       </div>
 
-      <div className="min-w-[180px] flex-1">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="min-w-[200px] flex-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <Link
             to={`/customers/${row.customerId}`}
-            className="text-sm font-medium text-fg hover:text-brand hover:underline"
+            className="target-24 t-label text-fg transition-colors hover:text-brand hover:underline"
           >
             {row.customerName}
           </Link>
-          {row.segment === 'PREMIUM' && (
-            <Badge tone="text-brand bg-brand/10 border-brand/40">Premium</Badge>
-          )}
+          {row.segment === 'PREMIUM' && <Badge tone="text-brand bg-brand/10 border-brand/30">Premium</Badge>}
+          {/* Only the exception is badged. Badging both states doubles the
+              visual noise to convey one bit. */}
           {!row.contacted ? (
-            <Badge tone="text-high bg-high-soft border-high/40">Not contacted</Badge>
+            <Badge tone="text-high bg-high-soft border-high/30">Not contacted</Badge>
           ) : (
-            <Badge tone="text-low bg-low-soft border-low/40" icon={CheckCircle2}>
+            <span className="inline-flex items-center gap-1 text-xs text-low">
+              <CheckCircle2 size={12} aria-hidden="true" />
               Contacted
-            </Badge>
+            </span>
           )}
         </div>
-        <p className="mt-0.5 text-xs text-fg-muted">{row.topFactors.join(' · ')}</p>
+        <p className="mt-1 text-xs leading-relaxed text-fg-muted">{row.topFactors.join(' · ')}</p>
       </div>
 
       <div className="w-28 shrink-0 text-right">
         <p className="font-mono text-sm text-fg tabular">{formatInr(row.orderAmount)}</p>
         {row.delayHours > 0 && (
-          <p className="text-xs text-fg-muted">{formatDelay(row.delayHours)}</p>
+          <p className="mt-0.5 text-xs text-fg-muted">{formatDelay(row.delayHours)}</p>
         )}
       </div>
 
       <div className="w-44 shrink-0">
         {row.proposedAction ? (
           <>
-            <p className="text-xs font-medium text-fg">{humanize(row.proposedAction)}</p>
-            <p className="font-mono text-[11px] text-fg-muted">
+            <p className="t-label text-fg">{humanize(row.proposedAction)}</p>
+            <p className="mt-0.5 font-mono text-[10.5px] text-fg-muted">
               {row.proposedCredit > 0 ? `${formatInr(row.proposedCredit)} · ` : ''}
               {row.policyReference}
             </p>
@@ -484,12 +523,15 @@ export function TriageRow({ row, onResolve, resolving, testId }) {
         )}
       </div>
 
+      {/* Primary weight only for HIGH. If every row's button were primary,
+          none of them would be. */}
       <Button
         size="sm"
-        variant={row.riskLevel === 'HIGH' ? 'primary' : 'secondary'}
+        variant={row.riskLevel === 'HIGH' ? 'primary' : 'outline'}
         loading={resolving}
         onClick={() => onResolve(row)}
         data-testid="triage-resolve"
+        className="w-[84px]"
       >
         {row.proposedAction ? 'Resolve' : 'Analyze'}
       </Button>
