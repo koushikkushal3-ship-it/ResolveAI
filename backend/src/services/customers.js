@@ -149,7 +149,14 @@ export async function getCustomer360(id) {
 
   return {
     customer: { ...customer, lifetime_value: Number(customer.lifetime_value) },
-    orders,
+    // delayHours is computed here rather than left to the client: the UI showed
+    // an order as both "DELAYED" and "On time" because it had a status but no
+    // delay to render.
+    orders: orders.map((o) => ({
+      ...o,
+      amount: Number(o.amount),
+      delayHours: delayHoursBetween(o.expected_delivery, o.current_eta),
+    })),
     conversations,
     actions,
     incidents: links.map(({ incidents, ...l }) => ({ ...l, incident: incidents })),

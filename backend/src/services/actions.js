@@ -194,13 +194,23 @@ export async function executeAction({ actionId, actor }) {
     );
 
     // Close the loop on the customer_incident so the dashboard reflects it.
-    if (action.incident_id) {
-      await supabase
-        .from('customer_incidents')
-        .update({ status: 'RESOLVED' })
-        .eq('customer_id', action.customer_id)
-        .eq('incident_id', action.incident_id);
-    }
+    //
+    // incident_id can be NULL here: actions reference incidents with ON DELETE
+    // SET NULL, so re-running a simulator scenario (which replaces its previous
+    // incident) nulls the link on any action already raised against it. Keying
+    // the update solely on incident_id then matched zero rows, silently leaving
+    // the case IDENTIFIED and holding "tickets avoided" at zero on the
+    // dashboard even after a successful resolution.
+    let link = supabase
+      .from('customer_incidents')
+      .update({ status: 'RESOLVED' })
+      .eq('customer_id', action.customer_id);
+
+    link = action.incident_id
+      ? link.eq('incident_id', action.incident_id)
+      : link.neq('status', 'RESOLVED');
+
+    unwrap(await link.select('id'), 'resolve customer incident');
 
     await audit({
       actorType: actor ? 'USER' : 'AI',
