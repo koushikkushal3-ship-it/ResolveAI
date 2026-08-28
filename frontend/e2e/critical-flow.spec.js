@@ -135,6 +135,29 @@ test.describe('Proactive resolution journey', () => {
     // rather than blanking the page.
     await expect(queue).toBeVisible({ timeout: 60_000 });
   });
+
+  test('the agent workbench survives selecting an incident and a customer', async ({ page }) => {
+    // Regression: selecting a customer crashed the whole app with
+    // "Cannot read properties of null (reading 'customer')". useApi reported
+    // loading:false alongside data:null for one render when `enabled` flipped
+    // true, so the loaded branch rendered against null and React unmounted.
+    const crashes = [];
+    page.on('pageerror', (e) => crashes.push(e.message));
+
+    await login(page);
+    await page.getByTestId('nav-agent').click();
+
+    await page.locator('#agent-incident').selectOption({ index: 1 });
+    await expect(page.locator('#agent-customer')).toBeEnabled();
+
+    await page.locator('#agent-customer').selectOption({ index: 1 });
+
+    // The page must still be mounted and showing content.
+    await expect(page.getByRole('heading', { name: 'AI Agent' })).toBeVisible();
+    await expect(page.getByText('Customer context')).toBeVisible();
+    await expect(page.locator('#root')).not.toBeEmpty();
+    expect(crashes).toEqual([]);
+  });
 });
 
 // ------------------------------------------------------- authorization ------

@@ -51,7 +51,24 @@ export function useApi(fetcher, deps = [], { enabled = true } = {}) {
 
   const refetch = useCallback(() => run(), [run]);
 
-  return { ...state, refetch };
+  /**
+   * Close the enabled-transition gap.
+   *
+   * While disabled the state is { data: null, loading: false }. When `enabled`
+   * flips true, React re-renders BEFORE the effect runs — so for one render the
+   * caller sees loading:false alongside data:null and takes its "loaded"
+   * branch, which then dereferences null and throws.
+   *
+   * That is not hypothetical: selecting a customer on /agent crashed the whole
+   * app with "Cannot read properties of null (reading 'customer')", unmounting
+   * React entirely and leaving a blank page.
+   *
+   * Deriving loading rather than storing it means there is no window in which
+   * "enabled, no data, no error" reads as loaded.
+   */
+  const loading = state.loading || (enabled && state.data === null && state.error === null);
+
+  return { ...state, loading, refetch };
 }
 
 /**

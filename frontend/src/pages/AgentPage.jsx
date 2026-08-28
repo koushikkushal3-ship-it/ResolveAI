@@ -178,21 +178,21 @@ export default function AgentPage() {
                         to={`/customers/${customerId}`}
                         className="text-sm font-medium text-fg hover:text-brand hover:underline"
                       >
-                        {context.data.customer.name}
+                        {context.data?.customer?.name ?? '—'}
                       </Link>
                       <p className="text-xs text-fg-muted">
-                        {context.data.customer.segment} ·{' '}
-                        {formatInr(context.data.customer.lifetime_value)}
+                        {context.data?.customer?.segment} ·{' '}
+                        {formatInr(context.data?.customer?.lifetime_value)}
                       </p>
                     </div>
-                    {context.data.order && (
+                    {context.data?.order && (
                       <dl className="grid grid-cols-2 gap-y-1.5 border-t border-border pt-3 text-sm">
                         <dt className="text-fg-muted">Order</dt>
-                        <dd className="text-right font-mono text-xs">{context.data.order.order_number}</dd>
+                        <dd className="text-right font-mono text-xs">{context.data?.order?.order_number}</dd>
                         <dt className="text-fg-muted">Value</dt>
-                        <dd className="text-right font-mono tabular">{formatInr(context.data.order.amount)}</dd>
+                        <dd className="text-right font-mono tabular">{formatInr(context.data?.order?.amount)}</dd>
                         <dt className="text-fg-muted">Delay</dt>
-                        <dd className="text-right font-mono tabular">{context.data.delayHours}h</dd>
+                        <dd className="text-right font-mono tabular">{context.data?.delayHours}h</dd>
                       </dl>
                     )}
                   </div>
