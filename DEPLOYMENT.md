@@ -15,19 +15,18 @@ difference is environment variables.
 
 ---
 
-## Step 1 — Fix two things on Render now
+**Everything below is done and verified.** It is kept as the procedure for
+redeploying, or for standing the stack up again from scratch.
 
-Open your Render service → **Environment**, and set:
+## Step 1 — Render environment
 
 | Key | Value |
 |---|---|
 | `NODE_ENV` | `production` |
 
-`/api/health` currently reports `"env":"development"`. In development the server
-auto-allows `localhost` origins and disables rate limiting in test paths;
-production is the correct posture for a public deployment.
-
-Leave `FRONTEND_URL` for now — Step 3 sets it, once Vercel has given you a URL.
+In development the server auto-allows `localhost` origins; production is the
+correct posture for a public deployment. Confirmed — `/api/health` reports
+`"env":"production"`.
 
 ## Step 2 — Deploy the frontend to Vercel
 
@@ -59,7 +58,7 @@ Render → **Environment** → set:
 
 | Key | Value |
 |---|---|
-| `FRONTEND_URL` | `https://YOUR-APP.vercel.app,http://localhost:5173` |
+| `FRONTEND_URL` | `https://resolve-ai-roan.vercel.app,http://localhost:5173` |
 
 **Comma-separated, no spaces, no trailing slashes.**
 
@@ -77,7 +76,7 @@ before testing, or CORS will still be running the old value.
 curl https://resolveai-ukwt.onrender.com/api/health
 
 # CORS accepts your Vercel origin
-curl -sI -H "Origin: https://YOUR-APP.vercel.app" \
+curl -sI -H "Origin: https://resolve-ai-roan.vercel.app" \
   https://resolveai-ukwt.onrender.com/api/health | grep -i access-control
 
 # ...and refuses anything else
@@ -90,6 +89,22 @@ The second should echo your origin. The third should print **nothing** — no
 
 Then open the app and walk the journey: sign in → simulate delivery delay →
 open the top-risk customer → analyze → execute → analytics.
+
+### Verified against production
+
+The full Playwright suite was run against the deployed stack, not only locally:
+
+```
+E2E_BASE_URL=https://resolve-ai-roan.vercel.app
+E2E_API_URL=https://resolveai-ukwt.onrender.com
+npx playwright test
+
+  14 passed (48.4s)
+```
+
+The complete proactive-resolution journey finished against production in 15.9s.
+The live bundle — fetched from the deployed asset, not a local build — scanned
+clean of every provider key, the Supabase service-role key and the JWT secret.
 
 ---
 
