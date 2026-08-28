@@ -5,7 +5,7 @@ const app = createApp();
 
 const server = app.listen(env.PORT, () => {
   console.log(`ResolveAI API listening on :${env.PORT} [${env.NODE_ENV}]`);
-  console.log(`CORS origin: ${env.FRONTEND_URL}`);
+  console.log(`CORS allow-list: ${env.FRONTEND_URL}`);
   if (isGeminiConfigured) {
     const { gemini, groq, openrouter } = providerSummary;
     console.log(

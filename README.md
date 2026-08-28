@@ -75,8 +75,9 @@ never clear a rule.
 
 | | |
 |---|---|
-| **Application** | *(added at deployment)* |
-| **API health** | *(added at deployment)* `/api/health` |
+| **Application** | *(deploy to Vercel — see [DEPLOYMENT.md](DEPLOYMENT.md))* |
+| **API** | https://resolveai-ukwt.onrender.com |
+| **API health** | https://resolveai-ukwt.onrender.com/api/health |
 | **Repository** | https://github.com/koushikkushal3-ship-it/SupportIQ |
 
 ### Demo credentials
@@ -154,7 +155,7 @@ Copy each `.env.example` to `.env`. **Never commit a filled `.env`.**
 | `GEMINI_API_KEY` | Plus `GEMINI_API_KEY_2`, `_3`… rotated on quota errors |
 | `GEMINI_MODEL` | Default `gemini-3.6-flash` |
 | `GROQ_API_KEY` / `OPENROUTER_API_KEY` | Optional failover providers |
-| `FRONTEND_URL` | Exact CORS origin |
+| `FRONTEND_URL` | CORS allow-list — comma-separated exact origins, e.g. `https://app.vercel.app,http://localhost:5173` |
 
 **`frontend/.env`** — exactly one variable, `VITE_API_URL`, and it is not a
 secret. Vite exposes every `VITE_*` value to the browser bundle, so nothing else

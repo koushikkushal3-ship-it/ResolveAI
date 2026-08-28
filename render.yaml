@@ -29,5 +29,12 @@ services:
         generateValue: true
       - key: GEMINI_API_KEY
         sync: false
+      # Optional failover providers.
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      # Comma-separated allow-list. Include localhost only if you want to run a
+      # local frontend against this deployed API.
       - key: FRONTEND_URL
         sync: false

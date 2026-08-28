@@ -13,16 +13,19 @@ Everything an evaluator needs, in one folder.
 | 1 | **Architecture Documentation** | ✅ Ready | [`01-ARCHITECTURE-DOCUMENTATION.md`](01-ARCHITECTURE-DOCUMENTATION.md) |
 | 2 | **AI Integration Breakdown** | ✅ Ready | [`02-AI-INTEGRATION-BREAKDOWN.md`](02-AI-INTEGRATION-BREAKDOWN.md) |
 | 3 | **GitHub Repository** | ✅ Public | https://github.com/koushikkushal3-ship-it/SupportIQ |
-| 4 | **Live Deployed Link** | ⬜ **You deploy** | Paste below once live |
+| 4 | **Live Deployed Link** | 🟡 Backend live, frontend pending | [`../DEPLOYMENT.md`](../DEPLOYMENT.md) |
 | 5 | **Demo Video (2–3 min)** | ⬜ **You record** | Script ready: [`DEMO-SCRIPT.md`](DEMO-SCRIPT.md) |
 
 ### Fill these in before submitting
 
 ```
-Live application URL : ______________________________________
-API health check     : ______________________________/api/health
+Live application URL : ______________________________________  (Vercel)
+API base URL         : https://resolveai-ukwt.onrender.com     ✅ deployed
+API health check     : https://resolveai-ukwt.onrender.com/api/health
 Demo video URL       : ______________________________________
 ```
+
+Deployment steps: [`../DEPLOYMENT.md`](../DEPLOYMENT.md)
 
 ### Test login credentials
 
