@@ -23,10 +23,16 @@ const schema = z.object({
     .min(32, 'JWT_SECRET must be at least 32 characters — generate one with crypto.randomBytes(48)'),
   JWT_EXPIRES_IN: z.string().default('8h'),
 
-  // GEMINI_API_KEY plus any number of GEMINI_API_KEY_<n>. Discovered
-  // dynamically below rather than declared one per key.
+  // Provider keys are discovered dynamically below: <PROVIDER>_API_KEY plus any
+  // number of <PROVIDER>_API_KEY_<n>. Only the models are declared here.
   GEMINI_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().default('gemini-3.6-flash'),
+
+  GROQ_API_KEY: z.string().optional(),
+  GROQ_MODEL: z.string().default('openai/gpt-oss-120b'),
+
+  OPENROUTER_API_KEY: z.string().optional(),
+  OPENROUTER_MODEL: z.string().default('meta-llama/llama-3.3-70b-instruct'),
 
   FRONTEND_URL: z.string().min(1).default('http://localhost:5173'),
 });
@@ -46,26 +52,42 @@ if (!parsed.success) {
 export const env = parsed.data;
 
 /**
- * Configured Gemini keys, in rotation order: GEMINI_API_KEY first, then
- * GEMINI_API_KEY_2, _3, ... in numeric order.
+ * Collect every key for one provider, in rotation order: <PREFIX>_API_KEY
+ * first, then <PREFIX>_API_KEY_2, _3, ... in numeric order.
  *
  * Discovered by scanning the environment rather than declared one variable per
- * key, so adding an eleventh key needs no code change. Blanks and duplicates
- * are dropped — a duplicate key would waste a rotation step retrying quota
- * that is already exhausted.
+ * key, so adding a twelfth key needs no code change. Blanks and duplicates are
+ * dropped — retrying a key whose quota is already spent wastes a rotation step.
+ *
+ * @param {string} prefix
+ * @returns {string[]}
  */
-export const geminiKeys = (() => {
+function collectKeys(prefix) {
   const numbered = Object.keys(process.env)
-    .map((name) => /^GEMINI_API_KEY_(\d+)$/.exec(name))
+    .map((name) => new RegExp(`^${prefix}_API_KEY_(\\d+)$`).exec(name))
     .filter(Boolean)
     .sort((a, b) => Number(a[1]) - Number(b[1]))
     .map((m) => process.env[m[0]]);
 
-  return [...new Set([env.GEMINI_API_KEY, ...numbered].map((k) => k?.trim()).filter(Boolean))];
-})();
+  return [
+    ...new Set([process.env[`${prefix}_API_KEY`], ...numbered].map((k) => k?.trim()).filter(Boolean)),
+  ];
+}
 
-/** True when at least one key is configured. False routes the agent to its fallback. */
-export const isGeminiConfigured = geminiKeys.length > 0;
+export const geminiKeys = collectKeys('GEMINI');
+export const groqKeys = collectKeys('GROQ');
+export const openrouterKeys = collectKeys('OPENROUTER');
+
+/** True when any provider is configured. False routes the agent to its fallback. */
+export const isGeminiConfigured =
+  geminiKeys.length + groqKeys.length + openrouterKeys.length > 0;
+
+/** For the health endpoint and the UI's AI-status badge. Counts only, never keys. */
+export const providerSummary = {
+  gemini: geminiKeys.length,
+  groq: groqKeys.length,
+  openrouter: openrouterKeys.length,
+};
 
 export const isProduction = env.NODE_ENV === 'production';
 export const isTest = env.NODE_ENV === 'test';

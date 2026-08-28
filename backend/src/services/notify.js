@@ -51,6 +51,10 @@ export async function sendCustomerNotification({
         sentiment: 'NEUTRAL',
         summary: 'Proactive outreach: customer notified of an incident and its resolution.',
         is_complaint: false,
+        // Excluded from the risk engine's sentiment signal. A message the
+        // business sends is not evidence of how the customer feels — without
+        // this, resolving a HIGH-risk customer lowered their own risk score.
+        is_outbound: true,
         status: 'OPEN',
       })
       .select('id')

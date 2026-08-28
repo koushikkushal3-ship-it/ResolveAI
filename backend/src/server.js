@@ -1,13 +1,18 @@
 import { createApp } from './app.js';
-import { env, isGeminiConfigured } from './config/env.js';
+import { env, isGeminiConfigured, providerSummary } from './config/env.js';
 
 const app = createApp();
 
 const server = app.listen(env.PORT, () => {
   console.log(`ResolveAI API listening on :${env.PORT} [${env.NODE_ENV}]`);
   console.log(`CORS origin: ${env.FRONTEND_URL}`);
-  if (!isGeminiConfigured) {
-    console.warn('GEMINI_API_KEY not set — the agent will use its deterministic fallback.');
+  if (isGeminiConfigured) {
+    const { gemini, groq, openrouter } = providerSummary;
+    console.log(
+      `LLM chain: ${gemini} Gemini -> ${groq} Groq -> ${openrouter} OpenRouter -> deterministic fallback`
+    );
+  } else {
+    console.warn('No LLM provider key set - the agent will use its deterministic fallback.');
   }
 });
 

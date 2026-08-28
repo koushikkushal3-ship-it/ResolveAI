@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 
-import { env, isGeminiConfigured } from './config/env.js';
+import { env, isGeminiConfigured, providerSummary } from './config/env.js';
 import { globalLimiter } from './middleware/rateLimit.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { authRouter } from './routes/auth.js';
@@ -45,6 +45,7 @@ export function createApp() {
         service: 'resolveai-api',
         env: env.NODE_ENV,
         aiConfigured: isGeminiConfigured,
+        aiProviders: providerSummary,
         timestamp: new Date().toISOString(),
       },
     });

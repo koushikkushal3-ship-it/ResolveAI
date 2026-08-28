@@ -11,7 +11,7 @@
 import { supabase, unwrap } from '../config/supabase.js';
 import { calculateCXRisk, delayHoursBetween } from '../services/risk.js';
 import { searchPolicy, buildPolicyQuery } from '../services/policy.js';
-import { generateStructured, isGeminiConfigured } from './gemini.js';
+import { generateStructured, isConfigured as isLlmConfigured } from './llm.js';
 import { recommendationSchema, chatResponseSchema, geminiResponseSchema, geminiChatSchema } from './schema.js';
 import { SYSTEM_INSTRUCTION, CHAT_SYSTEM_INSTRUCTION, buildRecommendationPrompt, buildChatPrompt } from './prompt.js';
 import { buildFallbackRecommendation, enforceAlwaysHuman } from './fallback.js';
@@ -65,10 +65,14 @@ export async function loadDecisionContext(customerId, incidentId) {
           .maybeSingle()
           .then((r) => unwrap(r, 'load order'))
       : Promise.resolve(null),
+    // Inbound only. Outbound notifications carry sentiment NEUTRAL, and
+    // counting them would let our own outreach overwrite the customer's actual
+    // sentiment and lower their risk score the moment we helped them.
     supabase
       .from('conversations')
       .select('id, sentiment, summary, is_complaint, created_at')
       .eq('customer_id', customerId)
+      .eq('is_outbound', false)
       .order('created_at', { ascending: false })
       .limit(10)
       .then((r) => unwrap(r, 'load conversations')),
@@ -172,7 +176,7 @@ export async function analyze({ customerId, incidentId, actor, force = false }) 
   let source;
   let failureReason = null;
 
-  if (!isGeminiConfigured) {
+  if (!isLlmConfigured) {
     recommendation = buildFallbackRecommendation(promptInput);
     source = 'FALLBACK_NO_KEY';
   } else {
@@ -186,7 +190,7 @@ export async function analyze({ customerId, incidentId, actor, force = false }) 
       const parsed = recommendationSchema.safeParse(result.data);
       if (parsed.success) {
         recommendation = parsed.data;
-        source = 'GEMINI';
+        source = result.provider.toUpperCase();
       } else {
         // The model answered but broke its own schema. One deterministic
         // fallback beats a re-prompt loop that can burn quota and still fail.
@@ -219,7 +223,7 @@ export async function analyze({ customerId, incidentId, actor, force = false }) 
   const payload = {
     ...recommendation,
     source,
-    aiGenerated: source === 'GEMINI',
+    aiGenerated: !source.startsWith('FALLBACK'),
     policiesConsidered: policies.map((p) => ({
       slug: p.slug,
       title: p.title,
@@ -251,7 +255,7 @@ export async function analyze({ customerId, incidentId, actor, force = false }) 
   }
 
   await audit({
-    actorType: source === 'GEMINI' ? 'AI' : 'SYSTEM',
+    actorType: source.startsWith('FALLBACK') ? 'SYSTEM' : 'AI',
     actorId: actor?.id ?? null,
     action: 'agent.analyze',
     entityType: 'customer_incident',
@@ -303,7 +307,7 @@ export async function chat({ customerId, incidentId, question }) {
     limit: 3,
   });
 
-  if (!isGeminiConfigured) {
+  if (!isLlmConfigured) {
     return {
       answer:
         'AI answers are unavailable because no Gemini key is configured. The policies most relevant to this ' +
