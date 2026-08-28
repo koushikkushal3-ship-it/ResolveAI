@@ -87,14 +87,17 @@ export async function generateStructured({
             responseSchema,
             temperature,
             // Gemini 3.x reasons before answering and those thinking tokens
-            // count against maxOutputTokens. At 1200 the model spent ~1150
-            // thinking and truncated the JSON mid-object (finishReason
-            // MAX_TOKENS). Thinking cannot be switched off on this model —
-            // thinkingConfig.thinkingBudget: 0 is rejected as INVALID_ARGUMENT —
-            // so the budget is sized to hold both instead. Observed usage for
-            // this prompt is ~1150 thinking + ~400 output; 4096 leaves room for
-            // a longer incident description without truncating.
-            maxOutputTokens: 4096,
+            // count against maxOutputTokens. Left alone this prompt burned
+            // ~1150 thinking tokens and truncated the JSON mid-object.
+            //
+            // thinkingBudget: 0 is rejected on this model (INVALID_ARGUMENT),
+            // but thinkingLevel 'low' is accepted and measures at zero thinking
+            // tokens — 45 total vs 384 unconfigured on the same call. This is
+            // schema-constrained extraction from context that is already
+            // assembled, so there is nothing for extended reasoning to add.
+            thinkingConfig: { thinkingLevel: 'low' },
+            // No thinking to fund, so this only has to hold the answer.
+            maxOutputTokens: 1024,
             // Keep the model from refusing an ordinary support case because a
             // customer complaint reads as "negative". These are business
             // messages, not open-ended chat.

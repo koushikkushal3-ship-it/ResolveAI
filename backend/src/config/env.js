@@ -23,12 +23,9 @@ const schema = z.object({
     .min(32, 'JWT_SECRET must be at least 32 characters — generate one with crypto.randomBytes(48)'),
   JWT_EXPIRES_IN: z.string().default('8h'),
 
-  // Up to three Gemini keys. Extras are rotated to on a quota error, which is
-  // the practical answer to a free-tier limit landing mid-demo. Every key is
-  // still Google Gemini, so this stays inside the assignment stack.
+  // GEMINI_API_KEY plus any number of GEMINI_API_KEY_<n>. Discovered
+  // dynamically below rather than declared one per key.
   GEMINI_API_KEY: z.string().optional(),
-  GEMINI_API_KEY_2: z.string().optional(),
-  GEMINI_API_KEY_3: z.string().optional(),
   GEMINI_MODEL: z.string().default('gemini-3.6-flash'),
 
   FRONTEND_URL: z.string().min(1).default('http://localhost:5173'),
@@ -49,13 +46,23 @@ if (!parsed.success) {
 export const env = parsed.data;
 
 /**
- * Configured Gemini keys, in rotation order. Blank entries are dropped, so a
- * half-filled .env degrades to however many keys are actually present rather
- * than failing on an empty string.
+ * Configured Gemini keys, in rotation order: GEMINI_API_KEY first, then
+ * GEMINI_API_KEY_2, _3, ... in numeric order.
+ *
+ * Discovered by scanning the environment rather than declared one variable per
+ * key, so adding an eleventh key needs no code change. Blanks and duplicates
+ * are dropped — a duplicate key would waste a rotation step retrying quota
+ * that is already exhausted.
  */
-export const geminiKeys = [env.GEMINI_API_KEY, env.GEMINI_API_KEY_2, env.GEMINI_API_KEY_3]
-  .map((k) => k?.trim())
-  .filter(Boolean);
+export const geminiKeys = (() => {
+  const numbered = Object.keys(process.env)
+    .map((name) => /^GEMINI_API_KEY_(\d+)$/.exec(name))
+    .filter(Boolean)
+    .sort((a, b) => Number(a[1]) - Number(b[1]))
+    .map((m) => process.env[m[0]]);
+
+  return [...new Set([env.GEMINI_API_KEY, ...numbered].map((k) => k?.trim()).filter(Boolean))];
+})();
 
 /** True when at least one key is configured. False routes the agent to its fallback. */
 export const isGeminiConfigured = geminiKeys.length > 0;
