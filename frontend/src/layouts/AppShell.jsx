@@ -90,7 +90,7 @@ function NavItems({ onNavigate }) {
     <nav aria-label="Main" className="space-y-5">
       {NAV_GROUPS.map((group) => (
         <div key={group.label}>
-          <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-fg-muted/70">
+          <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-fg-muted">
             {group.label}
           </p>
           <div className="space-y-0.5">
@@ -182,7 +182,7 @@ export function AppShell() {
         </div>
         <div className="border-t border-border p-3">
           <div className="mb-2 flex items-center gap-2.5 rounded-lg bg-surface-2 px-2.5 py-2">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand/15 font-mono text-xs font-semibold text-brand">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-fill text-[11px] font-semibold text-on-brand">
               {initials(user?.fullName)}
             </span>
             <div className="min-w-0">

@@ -57,7 +57,7 @@ export default function DashboardPage() {
           page reads as three blocks rather than a uniform grid of boxes. */}
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <p className="t-micro text-brand">Customer experience</p>
+          <p className="t-micro text-fg-muted">Customer experience</p>
           <h1 className="t-display mt-1.5">Command Center</h1>
           <p className="t-body mt-2 max-w-xl text-fg-muted">
             Who needs attention right now, and whether anyone is being missed.

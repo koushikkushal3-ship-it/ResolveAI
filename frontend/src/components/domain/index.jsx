@@ -40,7 +40,7 @@ export function RiskBadge({ score, level, size = 'md', testId }) {
       )}
     >
       <Icon size={size === 'lg' ? 14 : 12} aria-hidden="true" />
-      <span className="font-mono tabular">{score}</span>
+      <span className="num">{score}</span>
       <span className="opacity-70">/100</span>
       <span>{level}</span>
     </span>
@@ -61,7 +61,7 @@ export function RiskMeter({ risk, testId }) {
     <div data-testid={testId}>
       <div className="flex items-baseline justify-between gap-3">
         <div className="flex items-baseline gap-2">
-          <span className={cx('font-mono text-3xl font-semibold tabular', tone.text)}>{risk.score}</span>
+          <span className={cx('t-display text-[32px]', tone.text)}>{risk.score}</span>
           <span className="text-sm text-fg-muted">/ 100</span>
         </div>
         <RiskBadge score={risk.score} level={risk.level} />
@@ -106,7 +106,7 @@ export function RiskMeter({ risk, testId }) {
               className="flex items-center justify-between gap-3 rounded px-1.5 py-1 text-sm transition-colors hover:bg-surface-2"
             >
               <span className="text-fg-muted">{f.label}</span>
-              <span className={cx('font-mono text-xs tabular', tone.text)}>+{f.points}</span>
+              <span className={cx('num text-xs', tone.text)}>+{f.points}</span>
             </li>
           ))}
         </ul>
@@ -148,9 +148,9 @@ export function GuardrailStatus({ verdict, amount, autoLimit = 500, testId }) {
 
       <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
         <dt className="text-fg-muted">Proposed</dt>
-        <dd className="text-right font-mono text-fg tabular">{formatInr(amount ?? 0)}</dd>
+        <dd className="num text-right text-fg">{formatInr(amount ?? 0)}</dd>
         <dt className="text-fg-muted">Auto-approve limit</dt>
-        <dd className="text-right font-mono text-fg tabular">{formatInr(autoLimit)}</dd>
+        <dd className="num text-right text-fg">{formatInr(autoLimit)}</dd>
       </dl>
 
       {verdict.explanations?.length > 0 && (
@@ -353,16 +353,12 @@ export function StatCell({ label, value, hint, icon: Icon, tone = 'text-fg', tes
         {Icon && <Icon size={14} className={cx('shrink-0 opacity-60', tone)} aria-hidden="true" />}
       </div>
 
-      <p className={cx('t-display mt-3 font-mono', tone)}>{value}</p>
+      {/* No mono, and no decorative rule beneath. The colour of the numeral
+          already carries severity; an accent dash under it repeated the same
+          signal and read as ornament. */}
+      <p className={cx('t-display mt-2.5', tone)}>{value}</p>
 
-      {tone !== 'text-fg' && (
-        <span
-          className={cx('mt-2.5 block h-0.5 w-8 rounded-full', ACCENT[tone])}
-          aria-hidden="true"
-        />
-      )}
-
-      {hint && <p className={cx('text-xs text-fg-muted', tone !== 'text-fg' ? 'mt-2' : 'mt-3.5')}>{hint}</p>}
+      {hint && <p className="mt-2 text-xs text-fg-muted">{hint}</p>}
     </div>
   );
 }
@@ -407,13 +403,13 @@ export function CoverageBar({ coverage, testId }) {
         <p className="t-label text-fg-muted">
           Outreach coverage
           <span className="ml-2 text-fg">
-            <span className="font-mono text-base font-semibold tabular">{contacted}</span>
+            <span className="num text-[15px] font-semibold">{contacted}</span>
             <span className="text-fg-muted"> of </span>
-            <span className="font-mono text-base font-semibold tabular">{total}</span>
+            <span className="num text-[15px] font-semibold">{total}</span>
             <span className="text-fg-muted"> affected customers contacted</span>
           </span>
         </p>
-        <span className={cx('font-mono text-sm tabular', pct === 100 ? 'text-low' : 'text-fg-muted')}>
+        <span className={cx('num text-[13px]', pct === 100 ? 'text-low' : 'text-fg-muted')}>
           {pct}%
         </span>
       </div>
@@ -437,7 +433,7 @@ export function CoverageBar({ coverage, testId }) {
         {segments.map((s) => (
           <li key={s.key} className="flex items-center gap-1.5 text-xs">
             <span className={cx('h-2 w-2 rounded-full', s.cls)} aria-hidden="true" />
-            <span className="font-mono font-semibold text-fg tabular">{s.count}</span>
+            <span className="num font-semibold text-fg">{s.count}</span>
             <span className="text-fg-muted">{s.label}</span>
           </li>
         ))}
@@ -464,14 +460,17 @@ export function CoverageBar({ coverage, testId }) {
 export function TriageRow({ row, onResolve, resolving, testId }) {
   const tone = riskTone(row.riskLevel);
   return (
+    // No flex-wrap. Wrapping a five-column row produced a 130px tall block
+    // with the button orphaned on its own line. Below lg the secondary
+    // columns are hidden instead, which keeps every row one scannable line.
     <div
       data-testid={testId}
-      className="group flex flex-wrap items-center gap-x-5 gap-y-2.5 border-b border-border/60 px-5 py-3.5 transition-colors last:border-0 hover:bg-surface-2/60"
+      className="group flex items-center gap-x-4 border-b border-border px-4 py-2.5 transition-colors last:border-0 hover:bg-surface-2 sm:gap-x-5 sm:px-5"
     >
       {/* Score is the scan column — the queue is ranked by it, so it sits
           first, right-aligned as a numeral block rather than centred text. */}
       <div className="w-11 shrink-0">
-        <p className={cx('font-mono text-[22px] font-semibold leading-none tabular', tone.text)}>
+        <p className={cx('num text-[21px] font-semibold leading-none', tone.text)}>
           {row.riskScore}
         </p>
         <p className="t-micro mt-1 text-fg-muted">
@@ -479,8 +478,8 @@ export function TriageRow({ row, onResolve, resolving, testId }) {
         </p>
       </div>
 
-      <div className="min-w-[200px] flex-1">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-x-2 overflow-hidden">
           <Link
             to={`/customers/${row.customerId}`}
             className="target-24 t-label text-fg transition-colors hover:text-brand hover:underline"
@@ -499,17 +498,17 @@ export function TriageRow({ row, onResolve, resolving, testId }) {
             </span>
           )}
         </div>
-        <p className="mt-1 text-xs leading-relaxed text-fg-muted">{row.topFactors.join(' · ')}</p>
+        <p className="mt-0.5 truncate text-xs text-fg-muted">{row.topFactors.join(' · ')}</p>
       </div>
 
-      <div className="w-28 shrink-0 text-right">
-        <p className="font-mono text-sm text-fg tabular">{formatInr(row.orderAmount)}</p>
+      <div className="hidden w-28 shrink-0 text-right sm:block">
+        <p className="num text-[13px] text-fg">{formatInr(row.orderAmount)}</p>
         {row.delayHours > 0 && (
           <p className="mt-0.5 text-xs text-fg-muted">{formatDelay(row.delayHours)}</p>
         )}
       </div>
 
-      <div className="w-44 shrink-0">
+      <div className="hidden w-44 shrink-0 lg:block">
         {row.proposedAction ? (
           <>
             <p className="t-label text-fg">{humanize(row.proposedAction)}</p>
@@ -560,7 +559,7 @@ export function ActionRow({ action, right }) {
       </div>
       <div className="flex shrink-0 items-center gap-3">
         {Number(action.amount) > 0 && (
-          <span className="font-mono text-sm text-fg tabular">{formatInr(action.amount)}</span>
+          <span className="num text-[13px] text-fg">{formatInr(action.amount)}</span>
         )}
         {right}
       </div>
@@ -627,7 +626,7 @@ export function OrderRow({ order }) {
         <p className="mt-0.5 font-mono text-xs text-fg-muted">{order.order_number}</p>
       </div>
       <div className="flex shrink-0 items-center gap-3">
-        <span className="font-mono text-sm text-fg tabular">{formatInr(order.amount)}</span>
+        <span className="num text-[13px] text-fg">{formatInr(order.amount)}</span>
         <Badge tone={statusTone(order.status)}>{order.status}</Badge>
         {delayed && <span className="text-xs text-high">{formatDelay(order.delayHours)}</span>}
       </div>

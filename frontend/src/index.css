@@ -16,85 +16,89 @@
 --------------------------------------------------------------------------- */
 
 :root {
-  --rai-bg: #fbfcfd;
-  --rai-surface: #ffffff;
-  --rai-surface-2: #f6f8fa;
-  --rai-surface-3: #eef1f5;
-  /* Borders recede. In this register a border marks an edge, it does not
-     draw one — surfaces separate by value first, line second. */
-  --rai-border: #e6eaf0;
-  --rai-border-strong: #cdd5e0;
-  --rai-fg: #11161f;
-  --rai-fg-muted: #5c6773;
+  /* ---------------------------------------------------------------------
+     Linear-derived palette.
 
-  --rai-brand: #0369a1;
-  --rai-brand-fill: #0369a1;
+     Two deliberate deviations from Linear's own values, both forced by
+     contrast and both verified against the rendered DOM:
+
+     1. Linear's indigo #5e6ad2 measures 4.24:1 as text on the dark ground —
+        under AA. It is kept for FILLS (white on it is 4.7:1) and lightened to
+        #7c86e8 (6.1:1) for links and inline accent text.
+     2. Borders are split. Decorative dividers stay whisper-quiet, which is
+        the register's signature; but WCAG 1.4.11 governs meaningful UI
+        boundaries, so form inputs use --rai-border-input, which clears 3:1.
+        A divider between two panels is not a control; an input edge is.
+  --------------------------------------------------------------------- */
+  --rai-bg: #fbfbfc;
+  --rai-surface: #ffffff;
+  --rai-surface-2: #f4f5f6;
+  --rai-surface-3: #eceef0;
+  --rai-border: #e6e7e9;
+  --rai-border-strong: #d0d2d6;
+  --rai-border-input: #a8acb3;
+  --rai-fg: #08090a;
+  --rai-fg-muted: #585d65;
+
+  --rai-brand: #414da8;
+  --rai-brand-fill: #5e6ad2;
   --rai-on-brand: #ffffff;
 
   --rai-low: #15803d;
   --rai-low-fill: #16a34a;
-  --rai-low-soft: #dcfce7;
+  --rai-low-soft: #e8f6ec;
 
-  --rai-medium: #b45309;
+  --rai-medium: #8f5608;
   --rai-medium-fill: #d97706;
-  --rai-medium-soft: #fef3c7;
+  --rai-medium-soft: #fdf3e3;
 
-  --rai-high: #dc2626;
+  --rai-high: #c8342f;
   --rai-high-fill: #dc2626;
-  --rai-high-soft: #fee2e2;
+  --rai-high-soft: #fdeceb;
 
-  --rai-escalated: #0369a1;
-  --rai-escalated-soft: #e0f2fe;
+  --rai-escalated: #414da8;
+  --rai-escalated-soft: #eceef9;
 
-  /* Two-step elevation. Resting cards sit flat; only lifted surfaces (hover,
-     modals) get a shadow, so depth means something rather than decorating. */
-  /* Resting surfaces cast nothing. Only things that genuinely float — modals,
-     hover-lifted rows — get a shadow, so elevation still means something. */
   --rai-shadow: none;
-  --rai-shadow-lift: 0 8px 24px -8px rgb(15 23 42 / 0.16);
-  --rai-scrim: rgb(15 23 42 / 0.4);
-  /* No page wash. A gradient behind an operations console is decoration, and
-     decoration is exactly what this register removes. */
+  --rai-shadow-lift: 0 8px 24px -8px rgb(8 9 10 / 0.14);
+  --rai-scrim: rgb(8 9 10 / 0.35);
   --rai-page-wash: none;
   --rai-hairline: transparent;
 }
 
 .dark {
-  --rai-bg: #0a0d13;
-  --rai-surface: #101419;
-  --rai-surface-2: #171c23;
-  --rai-surface-3: #1f252e;
-  --rai-border: #21272f;
-  --rai-border-strong: #333b46;
-  --rai-fg: #e8eaed;
-  --rai-fg-muted: #868f9b;
+  --rai-bg: #08090a;
+  --rai-surface: #0f1011;
+  --rai-surface-2: #16171a;
+  --rai-surface-3: #1e2023;
+  --rai-border: #23252a;
+  --rai-border-strong: #2f3136;
+  --rai-border-input: #4a4d55;
+  --rai-fg: #f7f8f8;
+  --rai-fg-muted: #8a8f98;
 
-  --rai-brand: #38bdf8;
-  /* White on #0284c7 measures 4.1:1 in the rendered DOM — below AA for normal
-     text. #0369a1 gives white 5.93:1 while still holding 3.16:1 against the
-     page background, so the button stays visible as an object. Darker fills
-     pass the text check but sink into the background. */
-  --rai-brand-fill: #0369a1;
+  --rai-brand: #7c86e8;
+  --rai-brand-fill: #5e6ad2;
   --rai-on-brand: #ffffff;
 
-  --rai-low: #4ade80;
-  --rai-low-fill: #16a34a;
-  --rai-low-soft: rgb(22 163 74 / 0.16);
+  --rai-low: #4cc38a;
+  --rai-low-fill: #30a46c;
+  --rai-low-soft: rgb(48 164 108 / 0.14);
 
-  --rai-medium: #fbbf24;
-  --rai-medium-fill: #b45309;
-  --rai-medium-soft: rgb(245 158 11 / 0.16);
+  --rai-medium: #f5b544;
+  --rai-medium-fill: #a35f00;
+  --rai-medium-soft: rgb(245 181 68 / 0.13);
 
-  --rai-high: #f87171;
-  --rai-high-fill: #b91c1c;
-  --rai-high-soft: rgb(220 38 38 / 0.18);
+  --rai-high: #ff6369;
+  --rai-high-fill: #b5303a;
+  --rai-high-soft: rgb(255 99 105 / 0.13);
 
-  --rai-escalated: #38bdf8;
-  --rai-escalated-soft: rgb(56 189 248 / 0.16);
+  --rai-escalated: #7c86e8;
+  --rai-escalated-soft: rgb(124 134 232 / 0.14);
 
   --rai-shadow: none;
-  --rai-shadow-lift: 0 10px 30px -10px rgb(0 0 0 / 0.7);
-  --rai-scrim: rgb(0 0 0 / 0.66);
+  --rai-shadow-lift: 0 12px 32px -12px rgb(0 0 0 / 0.8);
+  --rai-scrim: rgb(0 0 0 / 0.6);
   --rai-page-wash: none;
   --rai-hairline: transparent;
 }
@@ -108,6 +112,7 @@
   --color-surface-3: var(--rai-surface-3);
   --color-border: var(--rai-border);
   --color-border-strong: var(--rai-border-strong);
+  --color-border-input: var(--rai-border-input);
   --color-fg: var(--rai-fg);
   --color-fg-muted: var(--rai-fg-muted);
 
@@ -170,8 +175,8 @@
   /* Visible focus on every interactive element. Never removed. */
   :focus-visible {
     outline: 2px solid var(--rai-brand);
-    outline-offset: 2px;
-    border-radius: 6px;
+    outline-offset: 1px;
+    border-radius: 5px;
   }
 
   h1,
@@ -238,12 +243,23 @@
      everything competed. These five have decisive jumps and each has ONE
      job; if a new size seems necessary, the layout is usually wrong.
   --------------------------------------------------------------------- */
+  /* Numerals render in the SANS with tabular figures, not the monospace.
+     Mono numerals read as terminal output; Inter's tabular figures align in a
+     column just as reliably and look like a product. Monospace is reserved for
+     things that genuinely are identifiers — order numbers, policy slugs. */
   .t-display {
     font-size: 26px;
     line-height: 1.05;
     font-weight: 600;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
+    font-feature-settings: 'ss01', 'cv05';
+  }
+
+  /* Any figure meant to be read as a quantity. */
+  .num {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
   }
   .t-title {
     font-size: 15px;
@@ -281,7 +297,7 @@
   --------------------------------------------------------------------- */
   .panel {
     position: relative;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid var(--rai-border);
     background: var(--rai-surface);
   }

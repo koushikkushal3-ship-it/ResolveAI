@@ -52,7 +52,7 @@ export default function LoginPage() {
         </span>
         <h1 className="text-2xl font-semibold tracking-tight">ResolveAI</h1>
         <p className="mt-1.5 text-sm text-fg-muted">Customer Experience Command Center</p>
-        <p className="mt-3 text-xs text-fg-muted/80">
+        <p className="mt-3 text-xs text-fg-muted">
           Resolve problems before customers have to ask.
         </p>
       </div>

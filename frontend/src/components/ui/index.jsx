@@ -12,17 +12,19 @@ const cx = (...parts) => parts.filter(Boolean).join(' ');
 
 // --- Button ------------------------------------------------------------------
 const BUTTON_VARIANTS = {
-  primary: 'bg-brand-fill text-on-brand hover:opacity-90 border-transparent',
-  secondary: 'bg-surface-2 text-fg hover:bg-border border-border',
+  primary: 'bg-brand-fill text-on-brand hover:brightness-110 border-transparent',
+  secondary: 'bg-surface-2 text-fg hover:bg-surface-3 border-border',
   ghost: 'bg-transparent text-fg-muted hover:text-fg hover:bg-surface-2 border-transparent',
-  danger: 'bg-high-fill text-white hover:opacity-90 border-transparent',
-  outline: 'bg-transparent text-fg border-border hover:bg-surface-2',
+  danger: 'bg-high-fill text-white hover:brightness-110 border-transparent',
+  outline: 'bg-transparent text-fg border-border-strong hover:bg-surface-2',
 };
 
+/* Compact by default. 28/32/36px with 13px labels — a 40px+ button with 16px
+   text reads consumer, not tool. */
 const BUTTON_SIZES = {
-  sm: 'h-8 px-3 text-sm gap-1.5',
-  md: 'h-10 px-4 text-sm gap-2',
-  lg: 'h-11 px-5 text-base gap-2',
+  sm: 'h-7 px-2.5 text-[12px] gap-1.5 rounded-[5px]',
+  md: 'h-8 px-3 text-[13px] gap-1.5 rounded-md',
+  lg: 'h-9 px-3.5 text-[13px] gap-2 rounded-md',
 };
 
 export function Button({
@@ -40,8 +42,10 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cx(
-        'inline-flex items-center justify-center rounded-md border font-medium',
-        'transition-colors duration-150 cursor-pointer',
+        'inline-flex items-center justify-center border font-medium whitespace-nowrap',
+        // 100ms: fast enough to feel instant, slow enough to read as a state
+        // change rather than a flicker.
+        'transition-[background-color,border-color,filter] duration-100 cursor-pointer',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         BUTTON_VARIANTS[variant],
         BUTTON_SIZES[size],
@@ -66,9 +70,9 @@ export function Card({ className, interactive = false, children, ...props }) {
   return (
     <div
       className={cx(
-        'surface-edge overflow-hidden rounded-xl border border-border bg-surface shadow-card',
+        'overflow-hidden rounded-lg border border-border bg-surface',
         interactive &&
-          'transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-border-strong hover:shadow-lift',
+          'transition-[border-color,background-color] duration-100 hover:border-border-strong',
         className
       )}
       {...props}
@@ -120,7 +124,7 @@ export function Badge({ tone = 'text-fg-muted bg-surface-2 border-border', icon:
   return (
     <span
       className={cx(
-        'inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-medium whitespace-nowrap',
+        'inline-flex items-center gap-1 rounded-[5px] border px-1.5 py-px text-[11px] font-medium whitespace-nowrap',
         tone,
         className
       )}
@@ -217,10 +221,12 @@ export function Field({ label, htmlFor, error, hint, required, children }) {
   );
 }
 
+/* border-input, not border: an input edge is a meaningful UI boundary and
+   must clear 3:1 (WCAG 1.4.11), unlike a decorative panel divider. */
 export const inputClass =
-  'w-full h-10 rounded-md border border-border bg-bg px-3 text-sm text-fg ' +
-  'placeholder:text-fg-muted/60 transition-colors ' +
-  'aria-[invalid=true]:border-high';
+  'w-full h-8 rounded-md border border-border-input bg-surface px-2.5 text-[13px] text-fg ' +
+  'placeholder:text-fg-muted/70 transition-colors duration-100 ' +
+  'hover:border-fg-muted/60 aria-[invalid=true]:border-high';
 
 export function Input({ describedBy, invalid, className, ...props }) {
   return (
@@ -321,8 +327,8 @@ export const Th = ({ children, className, ...props }) => (
   <th
     scope="col"
     className={cx(
-      'text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-fg-muted',
-      'sticky top-0 z-10 whitespace-nowrap border-b border-border bg-surface-2/90 px-3 py-2.5 backdrop-blur',
+      'text-left text-[11px] font-medium text-fg-muted',
+      'sticky top-0 z-10 whitespace-nowrap border-b border-border bg-surface px-3 py-2 backdrop-blur',
       className
     )}
     {...props}
@@ -332,7 +338,7 @@ export const Th = ({ children, className, ...props }) => (
 );
 
 export const Td = ({ children, className, ...props }) => (
-  <td className={cx('border-b border-border/50 px-3 py-3 align-middle', className)} {...props}>
+  <td className={cx('border-b border-border px-3 py-2 align-middle text-[13px]', className)} {...props}>
     {children}
   </td>
 );
