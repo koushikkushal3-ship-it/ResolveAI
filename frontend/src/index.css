@@ -16,14 +16,16 @@
 --------------------------------------------------------------------------- */
 
 :root {
-  --rai-bg: #f6f8fb;
+  --rai-bg: #fbfcfd;
   --rai-surface: #ffffff;
-  --rai-surface-2: #f1f5f9;
-  --rai-surface-3: #e8edf4;
-  --rai-border: #d3dce8;
-  --rai-border-strong: #b9c6d8;
-  --rai-fg: #0f172a;
-  --rai-fg-muted: #566274;
+  --rai-surface-2: #f6f8fa;
+  --rai-surface-3: #eef1f5;
+  /* Borders recede. In this register a border marks an edge, it does not
+     draw one — surfaces separate by value first, line second. */
+  --rai-border: #e6eaf0;
+  --rai-border-strong: #cdd5e0;
+  --rai-fg: #11161f;
+  --rai-fg-muted: #5c6773;
 
   --rai-brand: #0369a1;
   --rai-brand-fill: #0369a1;
@@ -46,28 +48,26 @@
 
   /* Two-step elevation. Resting cards sit flat; only lifted surfaces (hover,
      modals) get a shadow, so depth means something rather than decorating. */
-  --rai-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
-  --rai-shadow-lift: 0 4px 14px -4px rgb(15 23 42 / 0.14);
-  --rai-scrim: rgb(15 23 42 / 0.45);
-
-  /* A barely-there wash so the page is not a flat slab behind the cards. */
-  --rai-page-wash: radial-gradient(
-    900px 500px at 82% -8%,
-    rgb(3 105 161 / 0.07),
-    transparent 62%
-  );
-  --rai-hairline: rgb(255 255 255 / 0.7);
+  /* Resting surfaces cast nothing. Only things that genuinely float — modals,
+     hover-lifted rows — get a shadow, so elevation still means something. */
+  --rai-shadow: none;
+  --rai-shadow-lift: 0 8px 24px -8px rgb(15 23 42 / 0.16);
+  --rai-scrim: rgb(15 23 42 / 0.4);
+  /* No page wash. A gradient behind an operations console is decoration, and
+     decoration is exactly what this register removes. */
+  --rai-page-wash: none;
+  --rai-hairline: transparent;
 }
 
 .dark {
-  --rai-bg: #0b1220;
-  --rai-surface: #111827;
-  --rai-surface-2: #1a2434;
-  --rai-surface-3: #223044;
-  --rai-border: #2c3a4f;
-  --rai-border-strong: #3d4d66;
-  --rai-fg: #f8fafc;
-  --rai-fg-muted: #94a6bd;
+  --rai-bg: #0a0d13;
+  --rai-surface: #101419;
+  --rai-surface-2: #171c23;
+  --rai-surface-3: #1f252e;
+  --rai-border: #21272f;
+  --rai-border-strong: #333b46;
+  --rai-fg: #e8eaed;
+  --rai-fg-muted: #868f9b;
 
   --rai-brand: #38bdf8;
   /* White on #0284c7 measures 4.1:1 in the rendered DOM — below AA for normal
@@ -92,18 +92,11 @@
   --rai-escalated: #38bdf8;
   --rai-escalated-soft: rgb(56 189 248 / 0.16);
 
-  --rai-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
-  --rai-shadow-lift: 0 6px 20px -6px rgb(0 0 0 / 0.6);
-  --rai-scrim: rgb(2 6 15 / 0.7);
-
-  --rai-page-wash: radial-gradient(
-    900px 500px at 82% -8%,
-    rgb(56 189 248 / 0.09),
-    transparent 62%
-  );
-  /* A 1px top highlight reads as a lit edge and is what stops dark cards
-     looking like flat rectangles. */
-  --rai-hairline: rgb(255 255 255 / 0.06);
+  --rai-shadow: none;
+  --rai-shadow-lift: 0 10px 30px -10px rgb(0 0 0 / 0.7);
+  --rai-scrim: rgb(0 0 0 / 0.66);
+  --rai-page-wash: none;
+  --rai-hairline: transparent;
 }
 
 /* `inline` makes utilities reference the runtime variable directly,
@@ -158,12 +151,10 @@
 
   body {
     background-color: var(--rai-bg);
-    background-image: var(--rai-page-wash);
-    background-attachment: fixed;
     color: var(--rai-fg);
     font-family: var(--font-sans);
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     /* Inter's optical sizing and slightly tighter tracking at display sizes. */
     letter-spacing: -0.006em;
@@ -248,21 +239,21 @@
      job; if a new size seems necessary, the layout is usually wrong.
   --------------------------------------------------------------------- */
   .t-display {
-    font-size: 30px;
+    font-size: 26px;
     line-height: 1.05;
     font-weight: 600;
     letter-spacing: -0.025em;
     font-variant-numeric: tabular-nums;
   }
   .t-title {
-    font-size: 18px;
+    font-size: 15px;
     line-height: 1.3;
     font-weight: 600;
     letter-spacing: -0.018em;
   }
   .t-body {
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 13px;
+    line-height: 1.6;
   }
   /* 12px, not 12.5 — Tailwind's text-xs is 12px and having both meant the
      scale silently carried two near-identical steps. One value, one step. */
@@ -290,19 +281,9 @@
   --------------------------------------------------------------------- */
   .panel {
     position: relative;
-    border-radius: 14px;
+    border-radius: 10px;
     border: 1px solid var(--rai-border);
     background: var(--rai-surface);
-    box-shadow: var(--rai-shadow);
-  }
-  .panel::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 1px;
-    border-radius: 14px 14px 0 0;
-    background: linear-gradient(90deg, transparent, var(--rai-hairline), transparent);
-    pointer-events: none;
   }
 
   /* Lit top edge. One shared class rather than repeating a pseudo-element
