@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { env, isGeminiConfigured } from './config/env.js';
 import { globalLimiter } from './middleware/rateLimit.js';
 import { errorHandler, notFoundHandler } from './middleware/error.js';
+import { authRouter } from './routes/auth.js';
 
 export function createApp() {
   const app = express();
@@ -47,7 +48,8 @@ export function createApp() {
     });
   });
 
-  // Routes are mounted here as each phase lands.
+  app.use('/api/auth', authRouter);
+  // Further routers mount here as each phase lands.
 
   app.use(notFoundHandler);
   app.use(errorHandler);
