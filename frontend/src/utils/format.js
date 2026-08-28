@@ -12,11 +12,13 @@ const inr = new Intl.NumberFormat('en-IN', {
   maximumFractionDigits: 0,
 });
 
+// Two fraction digits, not one: at one, ₹1,01,098 collapses to "₹1L" and the
+// tile loses the very precision that makes the number worth showing.
 const inrCompact = new Intl.NumberFormat('en-IN', {
   style: 'currency',
   currency: 'INR',
   notation: 'compact',
-  maximumFractionDigits: 1,
+  maximumFractionDigits: 2,
 });
 
 /** @param {number|string|null|undefined} value */
