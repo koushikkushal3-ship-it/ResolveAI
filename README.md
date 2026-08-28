@@ -280,19 +280,29 @@ lack.
 | [RUNBOOK](docs/RUNBOOK.md) | Setup, deployment, troubleshooting, routine operations |
 | [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md) | Build plan, requirements validation, risk register |
 
+## Submission
+
+Everything an evaluator needs is in **[`submission/`](submission/)** — the
+architecture documentation, the AI integration breakdown, the demo script,
+captured test evidence, and a rubric mapping.
+
+> The brief writes `/client` and `/server`. This repository uses **`frontend/`**
+> (the React client) and **`backend/`** (the Express server) for the same
+> separation.
+
 ## Repository layout
 
 ```
 SupportIQ/
-├── backend/          Express API — the only process holding secrets
+├── backend/          Express API (the "server") — the only process holding secrets
 │   └── src/
 │       ├── agent/    prompt, schema, LLM chain, tools, fallback, orchestrator
 │       ├── services/ risk, policy, guardrails, actions, simulator, analytics
 │       ├── db/       migrations + deterministic seed
 │       └── ...       routes, controllers, middleware, validators
-├── frontend/         React SPA — knows one variable, VITE_API_URL
+├── frontend/         React SPA (the "client") — knows one variable, VITE_API_URL
 │   ├── src/          components, pages, hooks, services, layouts
 │   └── e2e/          Playwright critical-flow suite
 ├── docs/             The seven documents above
-└── submission/       Everything needed for evaluation, in one place
+└── submission/       Deliverables 1 & 2, demo script, test evidence
 ```

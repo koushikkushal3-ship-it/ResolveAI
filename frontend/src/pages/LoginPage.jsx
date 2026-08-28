@@ -53,9 +53,7 @@ export default function LoginPage() {
   return (
     <AuthLayout>
       <div className="mb-7 text-center">
-        <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-fill text-on-brand">
-          <LogoMark size={28} />
-        </span>
+        <LogoMark size={44} className="mx-auto mb-4 block text-fg" />
         <h1 className="text-2xl font-semibold tracking-tight">ResolveAI</h1>
         <p className="mt-1.5 text-sm text-fg-muted">Customer Experience Command Center</p>
         <p className="mt-3 text-xs text-fg-muted">

@@ -17,84 +17,88 @@
 
 :root {
   /* ---------------------------------------------------------------------
-     Linear-derived palette.
+     Brand palette, from the supplied reference:
+       ink #201e1d · paper #f3f2f2 · accent #ec3013 · Archivo
 
-     Two deliberate deviations from Linear's own values, both forced by
-     contrast and both verified against the rendered DOM:
+     One deliberate split, forced by contrast. #ec3013 is kept EXACTLY as
+     specified for the logo mark, where it is a large shape and clears the
+     3:1 non-text threshold on both grounds. It cannot carry text: white on
+     it measures 4.2:1 and ink on it 3.95:1, both under AA. So button fills
+     use #d92a10 (white 4.9:1) and accent text uses #d02a10 on paper /
+     #ff6b4d on the dark ground. The brand reads as one colour; only the
+     variants that must carry text are shifted.
 
-     1. Linear's indigo #5e6ad2 measures 4.24:1 as text on the dark ground —
-        under AA. It is kept for FILLS (white on it is 4.7:1) and lightened to
-        #7c86e8 (6.1:1) for links and inline accent text.
-     2. Borders are split. Decorative dividers stay whisper-quiet, which is
-        the register's signature; but WCAG 1.4.11 governs meaningful UI
-        boundaries, so form inputs use --rai-border-input, which clears 3:1.
-        A divider between two panels is not a control; an input edge is.
+     The accent also carries HIGH risk. The mark is an escalation with its
+     last bar caught — making that same colour mean urgency is consistent
+     rather than a second red competing with the first.
   --------------------------------------------------------------------- */
-  --rai-bg: #fbfbfc;
+  --rai-bg: #f3f2f2;
   --rai-surface: #ffffff;
-  --rai-surface-2: #f4f5f6;
-  --rai-surface-3: #eceef0;
-  --rai-border: #e6e7e9;
-  --rai-border-strong: #d0d2d6;
-  --rai-border-input: #a8acb3;
-  --rai-fg: #08090a;
-  --rai-fg-muted: #585d65;
+  --rai-surface-2: #eceaea;
+  --rai-surface-3: #e2dfdf;
+  --rai-border: #dcd9d8;
+  --rai-border-strong: #c4c0bf;
+  --rai-border-input: #a09b9a;
+  --rai-fg: #201e1d;
+  --rai-fg-muted: #5d5856;
 
-  --rai-brand: #414da8;
-  --rai-brand-fill: #5e6ad2;
+  --rai-brand: #d02a10;
+  --rai-brand-fill: #d92a10;
   --rai-on-brand: #ffffff;
+  --rai-mark: #ec3013;
 
-  --rai-low: #15803d;
-  --rai-low-fill: #16a34a;
-  --rai-low-soft: #e8f6ec;
+  --rai-low: #1a7a41;
+  --rai-low-fill: #1d8c4a;
+  --rai-low-soft: #e6f4ec;
 
-  --rai-medium: #8f5608;
-  --rai-medium-fill: #d97706;
-  --rai-medium-soft: #fdf3e3;
+  --rai-medium: #8a5209;
+  --rai-medium-fill: #b8700c;
+  --rai-medium-soft: #fdf1de;
 
-  --rai-high: #c8342f;
-  --rai-high-fill: #dc2626;
-  --rai-high-soft: #fdeceb;
+  --rai-high: #c4260e;
+  --rai-high-fill: #d92a10;
+  --rai-high-soft: #fdeae6;
 
-  --rai-escalated: #414da8;
-  --rai-escalated-soft: #eceef9;
+  --rai-escalated: #5c4bc4;
+  --rai-escalated-soft: #eeecfa;
 
   --rai-shadow: none;
-  --rai-shadow-lift: 0 8px 24px -8px rgb(8 9 10 / 0.14);
-  --rai-scrim: rgb(8 9 10 / 0.35);
+  --rai-shadow-lift: 0 8px 24px -8px rgb(32 30 29 / 0.16);
+  --rai-scrim: rgb(32 30 29 / 0.4);
   --rai-page-wash: none;
   --rai-hairline: transparent;
 }
 
 .dark {
-  --rai-bg: #08090a;
-  --rai-surface: #0f1011;
-  --rai-surface-2: #16171a;
-  --rai-surface-3: #1e2023;
-  --rai-border: #23252a;
-  --rai-border-strong: #2f3136;
-  --rai-border-input: #4a4d55;
-  --rai-fg: #f7f8f8;
-  --rai-fg-muted: #8a8f98;
+  --rai-bg: #141312;
+  --rai-surface: #1c1a19;
+  --rai-surface-2: #242120;
+  --rai-surface-3: #2e2a29;
+  --rai-border: #2e2b29;
+  --rai-border-strong: #423d3b;
+  --rai-border-input: #5a534f;
+  --rai-fg: #f3f2f2;
+  --rai-fg-muted: #9a9391;
 
-  --rai-brand: #7c86e8;
-  --rai-brand-fill: #5e6ad2;
+  --rai-brand: #ff6b4d;
+  --rai-brand-fill: #d92a10;
   --rai-on-brand: #ffffff;
+  --rai-mark: #ec3013;
 
-  --rai-low: #4cc38a;
-  --rai-low-fill: #30a46c;
-  --rai-low-soft: rgb(48 164 108 / 0.14);
+  --rai-low: #4ec97f;
+  --rai-low-fill: #1d8c4a;
+  --rai-low-soft: rgb(78 201 127 / 0.14);
 
-  --rai-medium: #f5b544;
-  --rai-medium-fill: #a35f00;
-  --rai-medium-soft: rgb(245 181 68 / 0.13);
+  --rai-medium: #f0b34a;
+  --rai-medium-fill: #8a5209;
+  --rai-medium-soft: rgb(240 179 74 / 0.14);
 
-  --rai-high: #ff6369;
-  --rai-high-fill: #b5303a;
-  --rai-high-soft: rgb(255 99 105 / 0.13);
+  --rai-high: #ff6b4d;
+  --rai-high-fill: #b81f0a;
+  --rai-high-soft: rgb(236 48 19 / 0.16);
 
-  --rai-escalated: #7c86e8;
-  --rai-escalated-soft: rgb(124 134 232 / 0.14);
+  --rai-escalated: #9b8dff;
+  --rai-escalated-soft: rgb(155 141 255 / 0.16);
 
   --rai-shadow: none;
   --rai-shadow-lift: 0 12px 32px -12px rgb(0 0 0 / 0.8);
@@ -117,6 +121,7 @@
   --color-fg-muted: var(--rai-fg-muted);
 
   --color-brand: var(--rai-brand);
+  --color-mark: var(--rai-mark);
   --color-brand-fill: var(--rai-brand-fill);
   --color-on-brand: var(--rai-on-brand);
 
@@ -135,7 +140,8 @@
   --color-escalated: var(--rai-escalated);
   --color-escalated-soft: var(--rai-escalated-soft);
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-heading: 'Archivo', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   --shadow-card: var(--rai-shadow);
