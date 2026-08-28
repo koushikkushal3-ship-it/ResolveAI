@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { AppShell } from '../layouts/AppShell.jsx';
-import { LoadingState } from '../components/ui/index.jsx';
+import { ErrorState, LoadingState } from '../components/ui/index.jsx';
 
 import LoginPage from '../pages/LoginPage.jsx';
 import DashboardPage from '../pages/DashboardPage.jsx';
@@ -29,13 +29,37 @@ import NotFoundPage from '../pages/NotFoundPage.jsx';
  * betrayal the user notices.
  */
 function RequireAuth({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, waking, connectionError } = useAuth();
   const location = useLocation();
 
   if (loading) {
     return (
       <div className="min-h-dvh bg-bg p-8">
-        <LoadingState label="Restoring your session…" rows={4} />
+        <LoadingState
+          label={waking ? 'Waking the server, this can take up to a minute…' : 'Restoring your session…'}
+          rows={4}
+        />
+        {waking && (
+          <p className="mt-4 text-center text-sm text-fg-muted">
+            Waking the server — free-tier hosting sleeps after inactivity. This can take up to a minute.
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  // A failed connection is NOT a failed login. Bouncing to /login here would
+  // silently sign the user out every time the backend cold-starts, even though
+  // their token is still valid.
+  if (connectionError && !isAuthenticated) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-bg p-6">
+        <div className="w-full max-w-sm">
+          <ErrorState
+            message="Cannot reach the server. It may still be waking up."
+            onRetry={() => window.location.reload()}
+          />
+        </div>
       </div>
     );
   }
