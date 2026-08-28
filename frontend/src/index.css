@@ -1,0 +1,174 @@
+@import 'tailwindcss';
+
+/* Dark is driven by a class on <html>, set pre-paint in index.html. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Runtime palette.
+
+   Light and dark are authored together, not inverted. Several hues change
+   value between themes because the inverted value fails WCAG:
+     #0EA5E9 on white = 4.08:1  (fails normal text) -> light uses #0369A1 5.93:1
+     #16A34A on white = 3.30:1  (fails)             -> light uses #15803D 5.02:1
+     #F59E0B on white = 2.10:1  (fails badly)       -> light uses #B45309 5.05:1
+     #DC2626 on #0F172A = 3.71:1 (fails)            -> dark  uses #F87171 6.48:1
+   Every pair below is >= 4.5:1 for text and >= 3:1 for non-text boundaries.
+--------------------------------------------------------------------------- */
+
+:root {
+  --rai-bg: #f8fafc;
+  --rai-surface: #ffffff;
+  --rai-surface-2: #f1f5f9;
+  --rai-border: #cbd5e1;
+  --rai-fg: #0f172a;
+  --rai-fg-muted: #475569;
+
+  --rai-brand: #0369a1;
+  --rai-brand-fill: #0369a1;
+  --rai-on-brand: #ffffff;
+
+  --rai-low: #15803d;
+  --rai-low-fill: #16a34a;
+  --rai-low-soft: #dcfce7;
+
+  --rai-medium: #b45309;
+  --rai-medium-fill: #d97706;
+  --rai-medium-soft: #fef3c7;
+
+  --rai-high: #dc2626;
+  --rai-high-fill: #dc2626;
+  --rai-high-soft: #fee2e2;
+
+  --rai-escalated: #0369a1;
+  --rai-escalated-soft: #e0f2fe;
+
+  --rai-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
+  --rai-scrim: rgb(15 23 42 / 0.45);
+}
+
+.dark {
+  --rai-bg: #0f172a;
+  --rai-surface: #111827;
+  --rai-surface-2: #1e293b;
+  --rai-border: #334155;
+  --rai-fg: #f8fafc;
+  --rai-fg-muted: #cbd5e1;
+
+  --rai-brand: #0ea5e9;
+  --rai-brand-fill: #0284c7;
+  --rai-on-brand: #ffffff;
+
+  --rai-low: #16a34a;
+  --rai-low-fill: #15803d;
+  --rai-low-soft: #052e16;
+
+  --rai-medium: #f59e0b;
+  --rai-medium-fill: #b45309;
+  --rai-medium-soft: #451a03;
+
+  --rai-high: #f87171;
+  --rai-high-fill: #b91c1c;
+  --rai-high-soft: #450a0a;
+
+  --rai-escalated: #38bdf8;
+  --rai-escalated-soft: #082f49;
+
+  --rai-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  --rai-scrim: rgb(0 0 0 / 0.6);
+}
+
+/* `inline` makes utilities reference the runtime variable directly,
+   so a theme swap needs no stylesheet reload. */
+@theme inline {
+  --color-bg: var(--rai-bg);
+  --color-surface: var(--rai-surface);
+  --color-surface-2: var(--rai-surface-2);
+  --color-border: var(--rai-border);
+  --color-fg: var(--rai-fg);
+  --color-fg-muted: var(--rai-fg-muted);
+
+  --color-brand: var(--rai-brand);
+  --color-brand-fill: var(--rai-brand-fill);
+  --color-on-brand: var(--rai-on-brand);
+
+  --color-low: var(--rai-low);
+  --color-low-fill: var(--rai-low-fill);
+  --color-low-soft: var(--rai-low-soft);
+
+  --color-medium: var(--rai-medium);
+  --color-medium-fill: var(--rai-medium-fill);
+  --color-medium-soft: var(--rai-medium-soft);
+
+  --color-high: var(--rai-high);
+  --color-high-fill: var(--rai-high-fill);
+  --color-high-soft: var(--rai-high-soft);
+
+  --color-escalated: var(--rai-escalated);
+  --color-escalated-soft: var(--rai-escalated-soft);
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --shadow-card: var(--rai-shadow);
+
+  /* Density 8 (dashboard): a tight, consistent rhythm. */
+  --spacing: 0.25rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--rai-border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--rai-bg);
+    color: var(--rai-fg);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Numeric columns must not jitter as values change. */
+  .tabular,
+  table td,
+  table th {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Visible focus on every interactive element. Never removed. */
+  :focus-visible {
+    outline: 2px solid var(--rai-brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Headings inherit weight from utilities, not from the browser default. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  /* IDs, URLs and user content reflow instead of overflowing the container. */
+  .wrap-anywhere {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

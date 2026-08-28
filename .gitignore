@@ -1,0 +1,39 @@
+# --- Secrets: never commit. Hackathon rule 08.4 = instant disqualification. ---
+.env
+.env.*
+!.env.example
+
+# --- Dependencies ---
+node_modules/
+
+# --- Build output ---
+dist/
+build/
+frontend/dist/
+*.tsbuildinfo
+
+# --- Deployment ---
+.vercel/
+.render/
+
+# --- Test / tooling output ---
+coverage/
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
