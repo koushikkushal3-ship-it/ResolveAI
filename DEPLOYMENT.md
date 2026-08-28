@@ -11,7 +11,7 @@ difference is environment variables.
 |---|---|
 | Backend (Render) | ✅ https://resolveai-ukwt.onrender.com |
 | Database (Supabase) | ✅ migrations applied, seeded |
-| Frontend (Vercel) | ⬜ next step |
+| Frontend (Vercel) | ✅ https://resolve-ai-roan.vercel.app |
 
 ---
 

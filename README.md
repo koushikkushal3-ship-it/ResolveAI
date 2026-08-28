@@ -75,7 +75,7 @@ never clear a rule.
 
 | | |
 |---|---|
-| **Application** | *(deploy to Vercel — see [DEPLOYMENT.md](DEPLOYMENT.md))* |
+| **Application** | https://resolve-ai-roan.vercel.app |
 | **API** | https://resolveai-ukwt.onrender.com |
 | **API health** | https://resolveai-ukwt.onrender.com/api/health |
 | **Repository** | https://github.com/koushikkushal3-ship-it/SupportIQ |

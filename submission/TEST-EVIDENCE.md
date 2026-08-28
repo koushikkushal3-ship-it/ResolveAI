@@ -55,7 +55,34 @@ every guardrail branch, and — the decisive one — that a model claiming
 
 ---
 
-## End-to-end (Playwright)
+## End-to-end against PRODUCTION
+
+The suite was also run against the deployed stack — live Vercel frontend, live
+Render backend, live Supabase — not only against localhost:
+
+```
+E2E_BASE_URL=https://resolve-ai-roan.vercel.app E2E_API_URL=https://resolveai-ukwt.onrender.com   npx playwright test
+
+  14 passed (48.4s)
+```
+
+The full proactive-resolution journey (login, simulate, incident, Customer 360,
+live AI recommendation, guardrail, execution, notification, analytics)
+completed against production in 15.9s.
+
+Live bundle secret scan — fetched from the deployed asset, not a local build:
+
+```
+clean: gsk_          clean: SERVICE_ROLE
+clean: sk-or-v1      clean: JWT_SECRET
+clean: AQ.Ab8        clean: supabase.co
+```
+
+Only `https://resolveai-ukwt.onrender.com` is embedded, which is not a secret.
+
+---
+
+## End-to-end (Playwright, local)
 
 Organised against the evaluation rubric, so a gap in the suite maps to a gap in
 the score.

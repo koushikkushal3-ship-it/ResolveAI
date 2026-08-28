@@ -12,8 +12,8 @@ scoring rubric.
 | Deliverable | Link |
 |---|---|
 | **GitHub repository** (public) | https://github.com/koushikkushal3-ship-it/SupportIQ |
-| **Live application** | *(fill in after deployment)* |
-| **API health check** | *(fill in)* `/api/health` |
+| **Live application** | https://resolve-ai-roan.vercel.app |
+| **API health check** | https://resolveai-ukwt.onrender.com/api/health |
 | **Demo video (2–3 min)** | *(fill in — unlisted YouTube or Drive)* |
 
 ### Test credentials
