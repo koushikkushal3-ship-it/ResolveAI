@@ -212,12 +212,12 @@ cd frontend && npm install && npm run dev     # http://localhost:5173
 ```bash
 cd backend  && npm test                # 70 unit tests
 cd frontend && npm run build           # production build
-cd frontend && npx playwright test     # 14 E2E specs
+cd frontend && npx playwright test     # 15 E2E specs
 ```
 
 Model providers are stubbed in unit tests. No test consumes API quota.
 
-**Current state: 70/70 unit, 14/14 E2E, production build clean.**
+**Current state: 70/70 unit, 15/15 E2E, production build clean.**
 
 The E2E suite is organised against the evaluation rubric, so a gap in the suite
 maps to a gap in the score — the full journey, auth, authorization, CRUD,

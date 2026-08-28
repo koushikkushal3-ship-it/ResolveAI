@@ -172,7 +172,7 @@ Full detail: [`docs/AI_AGENT.md`](../docs/AI_AGENT.md)
 | Check | Result |
 |---|---|
 | Backend unit tests | **70 / 70** |
-| End-to-end (Playwright) | **14 / 14** |
+| End-to-end (Playwright) | **15 / 15**, also run against production |
 | Production build | Clean, no chunk > 500 kB |
 | Secret scan — bundle and runtime | Clean |
 | Contrast, both themes | **Zero failures** across 31 pairs |

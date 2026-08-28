@@ -63,12 +63,17 @@ Render backend, live Supabase — not only against localhost:
 ```
 E2E_BASE_URL=https://resolve-ai-roan.vercel.app E2E_API_URL=https://resolveai-ukwt.onrender.com   npx playwright test
 
-  14 passed (48.4s)
+  15 passed (52.7s)
 ```
 
 The full proactive-resolution journey (login, simulate, incident, Customer 360,
 live AI recommendation, guardrail, execution, notification, analytics)
-completed against production in 15.9s.
+completed against production in 21.5s.
+
+Spec 6 is a regression test for a crash found on the deployed app: selecting a
+customer on /agent threw "Cannot read properties of null (reading 'customer')"
+and unmounted React entirely, leaving a blank page. It fails against the old
+build.
 
 Live bundle secret scan — fetched from the deployed asset, not a local build:
 
