@@ -8,6 +8,14 @@ import { errorHandler, notFoundHandler } from './middleware/error.js';
 import { authRouter } from './routes/auth.js';
 import { agentRouter } from './routes/agent.js';
 import { actionsRouter } from './routes/actions.js';
+import {
+  customersRouter,
+  ordersRouter,
+  incidentsRouter,
+  knowledgeRouter,
+  analyticsRouter,
+  simulatorRouter,
+} from './routes/resources.js';
 
 export function createApp() {
   const app = express();
@@ -54,7 +62,12 @@ export function createApp() {
   app.use('/api/auth', authRouter);
   app.use('/api/agent', agentRouter);
   app.use('/api/actions', actionsRouter);
-  // Further routers mount here as each phase lands.
+  app.use('/api/customers', customersRouter);
+  app.use('/api/orders', ordersRouter);
+  app.use('/api/incidents', incidentsRouter);
+  app.use('/api/knowledge', knowledgeRouter);
+  app.use('/api/analytics', analyticsRouter);
+  app.use('/api/simulator', simulatorRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

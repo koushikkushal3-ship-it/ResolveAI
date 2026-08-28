@@ -310,6 +310,10 @@ async function main() {
     status: 'OPEN',
     started_at: iso(NOW - 6 * HOUR),
     created_by: admin.id,
+    // Marked simulated so re-running the delivery-delay scenario REPLACES this
+    // incident instead of adding a second one to the same customers, which
+    // would fire repeat_incident (+10) and push every score up.
+    is_simulated: true,
   };
 
   const otherIncidents = [
@@ -344,6 +348,10 @@ async function main() {
       // The CHECK constraint requires resolved_at exactly when status is RESOLVED.
       resolved_at: i.status === 'RESOLVED' ? iso(startedAt + intBetween(6, 40) * HOUR) : null,
       created_by: admin.id,
+      // Same key set as the primary incident: PostgREST builds one INSERT from
+      // the union of keys across the batch, so a missing key becomes an
+      // explicit NULL and trips the NOT NULL constraint.
+      is_simulated: false,
     };
   });
 
